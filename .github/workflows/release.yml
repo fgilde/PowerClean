@@ -84,7 +84,6 @@ jobs:
           name: PowerClean ${{ steps.ver.outputs.version }}
           tag_name: ${{ github.ref_name }}
           generate_release_notes: true
-          files: |
-            releases/*-Setup.exe
-            releases/*.nupkg
-            releases/RELEASES
+          # ALLE Velopack-Outputs hochladen — vor allem releases.win.json + assets.win.json,
+          # ohne die findet der UpdateManager das Release nicht (ab Velopack 0.0.1100+).
+          files: releases/*

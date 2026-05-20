@@ -16,6 +16,7 @@ out/
 [Rr]elease/
 [Pp]ublish/
 publish/
+publish-test/
 releases/
 TestResults/
 
@@ -29,6 +30,9 @@ packages/
 crash.log
 cleaner.log
 powerclean.log
+
+# Claude Code workspace
+.claude/
 
 # OS
 Thumbs.db

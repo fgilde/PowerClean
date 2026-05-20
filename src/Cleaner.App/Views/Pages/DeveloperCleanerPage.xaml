@@ -1,0 +1,15 @@
+<UserControl x:Class="Cleaner.App.Views.Pages.DeveloperCleanerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
+      xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=vm:DeveloperCleanerViewModel}"
+      >
+    <controls:CleanerPanelView Margin="40,24,40,40"
+                               PageTitle="Developer-Cleaner"
+                               PageSubtitle="JetBrains-Caches, Visual-Studio-Caches, NuGet, npm, Docker-Prune, bin/obj und node_modules. Achte auf die Sicherheits-Markierungen." />
+</UserControl>

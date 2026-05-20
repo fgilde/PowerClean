@@ -1,0 +1,130 @@
+<UserControl x:Class="Cleaner.App.Views.Pages.ProcessMonitorPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
+      xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:core="clr-namespace:Cleaner.Core.Services;assembly=Cleaner.Core"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=vm:ProcessMonitorViewModel}">
+    <Grid Margin="40,24,40,40">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock Text="{l:T Processes.Title}" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="{l:T Processes.Subtitle}"
+                       Style="{StaticResource PageSubtitle}" />
+        </StackPanel>
+
+        <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon ArrowSync24}"
+                           Content="{l:T Refresh}" Command="{Binding ViewModel.RefreshOnceCommand}" />
+                <ui:TextBox Grid.Column="1" Margin="16,0"
+                            PlaceholderText="{l:T Processes.FilterPlaceholder}"
+                            Text="{Binding ViewModel.Filter, UpdateSourceTrigger=PropertyChanged}" />
+                <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                    <CheckBox Content="{l:T Processes.AutoRefresh}" IsChecked="{Binding ViewModel.AutoRefresh}" Margin="0,0,12,0" />
+                    <TextBlock Text="{l:T Sort}" VerticalAlignment="Center" Margin="0,0,8,0" />
+                    <ComboBox SelectedValue="{Binding ViewModel.SortMode}"
+                              SelectedValuePath="Content" Width="100">
+                        <ComboBoxItem Content="RAM" />
+                        <ComboBoxItem Content="CPU" />
+                        <ComboBoxItem Content="Name" />
+                        <ComboBoxItem Content="PID" />
+                        <ComboBoxItem Content="Threads" />
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0">
+            <DataGrid ItemsSource="{Binding ViewModel.Processes}"
+                      AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
+                      HeadersVisibility="Column" GridLinesVisibility="None"
+                      Background="Transparent" BorderThickness="0"
+                      RowBackground="Transparent" AlternatingRowBackground="#08000000">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="ContextMenu">
+                            <Setter.Value>
+                                <ContextMenu>
+                                    <MenuItem Header="{l:T Reveal}"
+                                              Command="{Binding DataContext.ViewModel.OpenLocationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{l:T WindowsProperties}"
+                                              Command="{Binding DataContext.ViewModel.ShowPropertiesCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Info24" /></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{l:T SearchWeb}"
+                                              Command="{Binding DataContext.ViewModel.SearchWebCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Search24" /></MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="{l:T Processes.CopyPid}"
+                                              Command="{Binding DataContext.ViewModel.CopyPidCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
+                                    </MenuItem>
+                                    <MenuItem Header="{l:T CopyPath}"
+                                              Command="{Binding DataContext.ViewModel.CopyPathCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
+                                    </MenuItem>
+                                    <Separator />
+                                    <MenuItem Header="{l:T Processes.KillProcess}"
+                                              Command="{Binding DataContext.ViewModel.KillCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Stop24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
+                                    </MenuItem>
+                                </ContextMenu>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="{l:T Col.PID}" Binding="{Binding Pid}" Width="70" />
+                    <DataGridTextColumn Header="{l:T Col.Name}" Binding="{Binding Name}" Width="*" />
+                    <DataGridTextColumn Header="{l:T Col.Description}" Binding="{Binding Description}" Width="*" />
+                    <DataGridTextColumn Header="{l:T Col.CPUPercent}" Binding="{Binding CpuPercent, StringFormat={}{0:F1} %}" Width="80" />
+                    <DataGridTextColumn Header="{l:T Sort.RAM}" Binding="{Binding WorkingSetBytes, Converter={StaticResource BytesToSize}}" Width="90" />
+                    <DataGridTextColumn Header="{l:T Col.Threads}" Binding="{Binding ThreadCount}" Width="80" />
+                    <DataGridTemplateColumn Header="" Width="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate DataType="{x:Type core:ProcessSnapshot}">
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                    <ui:Button Appearance="Secondary" Padding="6,2" FontSize="11"
+                                               Icon="{ui:SymbolIcon Folder24}" Content="{l:T Programs.FolderShort}"
+                                               Command="{Binding DataContext.ViewModel.OpenLocationCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               CommandParameter="{Binding}" />
+                                    <ui:Button Appearance="Danger" Padding="6,2" FontSize="11" Margin="4,0,0,0"
+                                               Icon="{ui:SymbolIcon Stop24}" Content="{l:T Processes.End}"
+                                               Command="{Binding DataContext.ViewModel.KillCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                               CommandParameter="{Binding}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+
+        <TextBlock Grid.Row="3" Text="{Binding ViewModel.StatusText}" Opacity="0.8" Margin="0,16,0,0" />
+    </Grid>
+</UserControl>

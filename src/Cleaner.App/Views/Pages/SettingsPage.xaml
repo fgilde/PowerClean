@@ -1,0 +1,84 @@
+<UserControl x:Class="Cleaner.App.Views.Pages.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
+      xmlns:l="clr-namespace:Cleaner.App.Localization"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}">
+    <ScrollViewer Padding="40,24,40,40" VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="720" HorizontalAlignment="Left">
+            <TextBlock Text="{l:T Settings.Title}" Style="{StaticResource PageTitle}" />
+            <TextBlock Text="{l:T Settings.Subtitle}" Style="{StaticResource PageSubtitle}" />
+
+            <Border Style="{StaticResource Card}" Margin="0,8,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T Settings.Appearance}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+                    <ui:ToggleSwitch Content="{l:T Settings.DarkTheme}"
+                                     IsChecked="{Binding ViewModel.Settings.UseDarkTheme}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T Settings.Language}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Text="{l:T Settings.LanguageDesc}" Opacity="0.7" FontSize="12" Margin="0,0,0,12" TextWrapping="Wrap" />
+                    <ComboBox Width="260" HorizontalAlignment="Left"
+                              SelectedValue="{Binding ViewModel.Settings.Language}"
+                              SelectedValuePath="Tag">
+                        <ComboBoxItem Content="Deutsch" Tag="de" />
+                        <ComboBoxItem Content="English" Tag="en" />
+                    </ComboBox>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T Settings.CleanupSafety}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+                    <ui:ToggleSwitch Content="{l:T Settings.UseRecycleBin}"
+                                     IsChecked="{Binding ViewModel.Settings.UseRecycleBin}" />
+                    <TextBlock Opacity="0.6" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"
+                               Text="{l:T Settings.UseRecycleBinHint}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T Settings.Thresholds}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+                    <TextBlock Text="{l:T Settings.LargeFileThreshold}" Margin="0,0,0,4" />
+                    <ui:NumberBox Value="{Binding ViewModel.Settings.LargeFileThresholdMb}" Minimum="1" Maximum="100000" />
+                    <TextBlock Text="{l:T Settings.DuplicateMinSize}" Margin="0,16,0,4" />
+                    <ui:NumberBox Value="{Binding ViewModel.Settings.DuplicateMinSizeKb}" Minimum="1" Maximum="1000000" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}">
+                <StackPanel>
+                    <TextBlock Text="{l:T Settings.About}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+                    <TextBlock>
+                        <Run Text="PowerClean" FontWeight="SemiBold" />
+                        <Run Text=" · v" />
+                        <Run Text="{Binding ViewModel.Version, Mode=OneWay}" />
+                    </TextBlock>
+                    <TextBlock Opacity="0.7" FontSize="12" Margin="0,8,0,12" TextWrapping="Wrap"
+                               Text="{l:T Settings.AboutText}" />
+                    <StackPanel Orientation="Horizontal">
+                        <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon ArrowSync24}"
+                                   Content="Nach Updates suchen"
+                                   Command="{Binding ViewModel.CheckForUpdatesCommand}"
+                                   IsEnabled="{Binding ViewModel.IsCheckingUpdate, Converter={StaticResource InverseBoolToVis}}" />
+                        <ui:Button Appearance="Secondary" Icon="{ui:SymbolIcon Globe24}"
+                                   Margin="8,0,0,0"
+                                   Content="GitHub-Repo öffnen"
+                                   Command="{Binding ViewModel.OpenRepositoryCommand}" />
+                    </StackPanel>
+                    <TextBlock Margin="0,8,0,0" Opacity="0.7" FontSize="11"
+                               Text="{Binding ViewModel.UpdateStatus, Mode=OneWay}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

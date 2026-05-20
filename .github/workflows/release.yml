@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Manual release version (e.g. 0.2.0)'
+        required: true
+        default: '0.1.0'
+
+jobs:
+  release:
+    name: Build, pack and publish
+    runs-on: windows-latest
+
+    permissions:
+      contents: write   # für GitHub-Release-Upload
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # für Velopack-Delta-Pakete brauchen wir die History
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Derive version
+        id: ver
+        shell: pwsh
+        run: |
+          if ($env:GITHUB_REF -like 'refs/tags/v*') {
+            $v = $env:GITHUB_REF -replace '^refs/tags/v',''
+          } elseif ('${{ github.event.inputs.version }}' -ne '') {
+            $v = '${{ github.event.inputs.version }}'
+          } else {
+            $v = '0.1.0'
+          }
+          Write-Host "Version: $v"
+          "version=$v" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Restore + build (Release)
+        run: dotnet build -c Release /p:Version=${{ steps.ver.outputs.version }}
+
+      - name: Publish self-contained
+        run: |
+          dotnet publish src/Cleaner.App/Cleaner.App.csproj `
+            -c Release `
+            -r win-x64 `
+            --self-contained `
+            -o publish `
+            /p:Version=${{ steps.ver.outputs.version }} `
+            /p:PublishSingleFile=false
+
+      - name: Install Velopack CLI (vpk)
+        run: dotnet tool install --global vpk
+
+      - name: Pack with Velopack
+        run: |
+          vpk pack `
+            --packId PowerClean `
+            --packTitle "PowerClean" `
+            --packAuthors "fgilde" `
+            --packVersion ${{ steps.ver.outputs.version }} `
+            --packDir publish `
+            --mainExe PowerClean.exe `
+            --outputDir releases
+
+      - name: Upload artifacts (Workflow-Run)
+        uses: actions/upload-artifact@v4
+        with:
+          name: PowerClean-${{ steps.ver.outputs.version }}
+          path: releases/*
+
+      - name: Create / update GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          name: PowerClean ${{ steps.ver.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            releases/*-Setup.exe
+            releases/*.nupkg
+            releases/RELEASES

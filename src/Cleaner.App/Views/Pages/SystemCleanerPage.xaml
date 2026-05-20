@@ -1,0 +1,17 @@
+<UserControl x:Class="Cleaner.App.Views.Pages.SystemCleanerPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
+      xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:items="clr-namespace:Cleaner.App.ViewModels.Items"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=vm:SystemCleanerViewModel}"
+      >
+    <controls:CleanerPanelView Margin="40,24,40,40"
+                               PageTitle="System aufräumen"
+                               PageSubtitle="Temp-Dateien, Caches, Browser-Cache, Windows-Update-Cache und Logs. Sicher voreingestellt — du kontrollierst was gelöscht wird." />
+</UserControl>

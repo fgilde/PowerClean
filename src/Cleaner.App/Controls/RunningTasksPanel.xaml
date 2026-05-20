@@ -1,0 +1,76 @@
+<UserControl x:Class="Cleaner.App.Controls.RunningTasksPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:svc="clr-namespace:Cleaner.App.Services"
+             xmlns:l="clr-namespace:Cleaner.App.Localization"
+             mc:Ignorable="d"
+             d:DesignWidth="380" d:DesignHeight="300">
+    <Border Background="{DynamicResource SolidBackgroundFillColorTertiaryBrush}"
+            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+            BorderThickness="1" CornerRadius="8" MinWidth="380">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0" Padding="16,12"
+                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="0,0,0,1">
+                <TextBlock Text="{l:T Tasks.Header}" FontWeight="SemiBold" FontSize="14" />
+            </Border>
+
+            <!-- Leerzustand -->
+            <TextBlock Grid.Row="1" Text="{l:T Tasks.None}"
+                       Opacity="0.6" Padding="16,20"
+                       HorizontalAlignment="Center"
+                       Visibility="{Binding Count, Converter={StaticResource InverseBoolToVisFromInt}}" />
+
+            <!-- Task-Liste -->
+            <ScrollViewer Grid.Row="1" MaxHeight="420" VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding Count, Converter={StaticResource BoolToVisFromInt}}">
+                <ItemsControl ItemsSource="{Binding Tasks}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="{x:Type svc:RunningTask}">
+                            <Border Padding="16,12"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                                    BorderThickness="0,0,0,1">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" FontWeight="SemiBold" />
+                                            <TextBlock Text="{Binding Category}" Opacity="0.6" FontSize="11" />
+                                        </StackPanel>
+                                        <ui:Button Grid.Column="1" Appearance="Caution"
+                                                   Padding="6,2" FontSize="11"
+                                                   Icon="{ui:SymbolIcon Dismiss24}"
+                                                   Content="{l:T Cancel}"
+                                                   Command="{Binding CancelCommand}" />
+                                    </Grid>
+                                    <ProgressBar Grid.Row="1" Margin="0,8,0,0" Height="6"
+                                                 Minimum="0" Maximum="100"
+                                                 IsIndeterminate="{Binding IsIndeterminate}"
+                                                 Value="{Binding Progress, Mode=OneWay}" />
+                                    <TextBlock Grid.Row="2" Text="{Binding StatusText}"
+                                               Opacity="0.7" FontSize="11" Margin="0,4,0,0" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+    </Border>
+</UserControl>

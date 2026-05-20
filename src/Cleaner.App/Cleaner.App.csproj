@@ -1,0 +1,42 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net9.0-windows10.0.19041.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>Cleaner.App</RootNamespace>
+    <AssemblyName>PowerClean</AssemblyName>
+    <Product>PowerClean</Product>
+    <AssemblyTitle>PowerClean</AssemblyTitle>
+    <Company>fgilde</Company>
+    <Description>Windows cleanup, disk analysis and system maintenance</Description>
+
+    <!-- Version wird bei CI per /p:Version=x.y.z überschrieben -->
+    <Version>0.1.0</Version>
+    <FileVersion>0.1.0.0</FileVersion>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
+    <LegacyCorruptedStateExceptionsPolicy>true</LegacyCorruptedStateExceptionsPolicy>
+
+    <!-- Velopack braucht eigenen Main → siehe Program.cs -->
+    <StartupObject>Cleaner.App.Program</StartupObject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Runtime.legacyCorruptedStateExceptionsPolicy" Value="true" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="WPF-UI" Version="3.0.5" />
+    <PackageReference Include="Velopack" Version="0.0.1298" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cleaner.Core\Cleaner.Core.csproj" />
+  </ItemGroup>
+</Project>

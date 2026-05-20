@@ -1,0 +1,35 @@
+# .NET
+bin/
+obj/
+out/
+*.user
+*.suo
+.vs/
+.vscode/
+*.userprefs
+
+# Rider
+.idea/
+
+# Build results
+[Dd]ebug/
+[Rr]elease/
+[Pp]ublish/
+publish/
+releases/
+TestResults/
+
+# NuGet
+*.nupkg
+project.lock.json
+packages/
+
+# Logs
+*.log
+crash.log
+cleaner.log
+powerclean.log
+
+# OS
+Thumbs.db
+.DS_Store

@@ -19,6 +19,7 @@
     <AssemblyVersion>0.1.0.0</AssemblyVersion>
 
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\PowerClean.ico</ApplicationIcon>
     <SupportedOSPlatformVersion>10.0.17763.0</SupportedOSPlatformVersion>
     <LegacyCorruptedStateExceptionsPolicy>true</LegacyCorruptedStateExceptionsPolicy>
 
@@ -38,5 +39,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cleaner.Core\Cleaner.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Icon auch als Resource einbetten — fürs FluentWindow.Icon Binding -->
+    <Resource Include="Assets\PowerClean.ico" />
   </ItemGroup>
 </Project>

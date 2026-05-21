@@ -93,6 +93,11 @@
                                               CommandParameter="{Binding}">
                                         <MenuItem.Icon><ui:SymbolIcon Symbol="Stop24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
                                     </MenuItem>
+                                    <MenuItem Header="{l:T Processes.KillElevated}"
+                                              Command="{Binding DataContext.ViewModel.KillElevatedCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                              CommandParameter="{Binding}">
+                                        <MenuItem.Icon><ui:SymbolIcon Symbol="ShieldKeyhole24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
+                                    </MenuItem>
                                 </ContextMenu>
                             </Setter.Value>
                         </Setter>

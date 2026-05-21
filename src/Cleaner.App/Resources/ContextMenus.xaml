@@ -77,11 +77,6 @@
                   CommandParameter="{Binding}">
             <MenuItem.Icon><ui:SymbolIcon Symbol="AppsListDetail24" /></MenuItem.Icon>
         </MenuItem>
-        <MenuItem Header="{l:T OpenSystemContextMenu}"
-                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenSystemContextMenuCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                  CommandParameter="{Binding}">
-            <MenuItem.Icon><ui:SymbolIcon Symbol="MoreHorizontal24" /></MenuItem.Icon>
-        </MenuItem>
         <Separator />
         <MenuItem Header="{l:T Delete}"
                   Command="{Binding PlacementTarget.Tag.ViewModel.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
@@ -133,11 +128,6 @@
                   Command="{x:Static h:FilePathCommands.OpenWithDialog}"
                   CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
             <MenuItem.Icon><ui:SymbolIcon Symbol="AppsListDetail24" /></MenuItem.Icon>
-        </MenuItem>
-        <MenuItem Header="{l:T OpenSystemContextMenu}"
-                  Command="{x:Static h:FilePathCommands.OpenSystemContextMenu}"
-                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
-            <MenuItem.Icon><ui:SymbolIcon Symbol="MoreHorizontal24" /></MenuItem.Icon>
         </MenuItem>
     </ContextMenu>
 

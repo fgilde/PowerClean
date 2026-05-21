@@ -28,19 +28,7 @@ public static class FilePathCommands
             {
                 var dir = System.IO.Directory.Exists(p) ? p : System.IO.Path.GetDirectoryName(p);
                 if (string.IsNullOrEmpty(dir)) return;
-                foreach (var shell in new[] { "wt.exe", "powershell.exe", "cmd.exe" })
-                {
-                    try
-                    {
-                        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(shell)
-                        {
-                            UseShellExecute = true,
-                            WorkingDirectory = dir,
-                        });
-                        return;
-                    }
-                    catch { /* try next */ }
-                }
+                TerminalLauncher.OpenIn(dir);
             }
             catch (Exception ex) { App.LogException("FilePathCommands.OpenInTerminal", ex); }
         });

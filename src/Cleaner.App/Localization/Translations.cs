@@ -247,6 +247,7 @@ public static class Translations
             ["Processes.FilterPlaceholder"] = "Filter (process or description name)...",
             ["Processes.AutoRefresh"] = "Auto-refresh (2s)",
             ["Processes.KillProcess"] = "Kill process",
+            ["Processes.KillElevated"] = "Force kill as admin (UAC)",
             ["Processes.CopyPid"] = "Copy PID",
             ["Processes.End"] = "End",
 
@@ -522,6 +523,7 @@ public static class Translations
             ["Processes.FilterPlaceholder"] = "Filter (Prozess- oder Beschreibungsname)...",
             ["Processes.AutoRefresh"] = "Auto-Refresh (2s)",
             ["Processes.KillProcess"] = "Prozess beenden",
+            ["Processes.KillElevated"] = "Als Admin erzwingen (UAC)",
             ["Processes.CopyPid"] = "PID kopieren",
             ["Processes.End"] = "Beenden",
 

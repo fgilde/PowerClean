@@ -1,6 +1,5 @@
 using System.Windows;
 using System.Windows.Media;
-using System.Windows.Shell;
 using Cleaner.App.Services;
 using Cleaner.App.ViewModels;
 using Cleaner.App.Views.Pages;
@@ -35,19 +34,6 @@ public partial class MainWindow : FluentWindow
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);
-
-        // WPF-UIs FluentWindow setzt sein eigenes WindowChrome (mit ResizeBorder nur unten).
-        // Wir überschreiben das hier, damit das Fenster an allen 4 Kanten resizable ist.
-        var chrome = WindowChrome.GetWindowChrome(this);
-        if (chrome is null)
-        {
-            chrome = new WindowChrome();
-            WindowChrome.SetWindowChrome(this, chrome);
-        }
-        chrome.ResizeBorderThickness = new Thickness(8);
-        chrome.CaptionHeight = 32;
-        chrome.GlassFrameThickness = new Thickness(0);
-        chrome.UseAeroCaptionButtons = false;
 
         var targetTheme = _settings.UseDarkTheme ? ApplicationTheme.Dark : ApplicationTheme.Light;
         var oppositeTheme = _settings.UseDarkTheme ? ApplicationTheme.Light : ApplicationTheme.Dark;

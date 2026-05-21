@@ -105,19 +105,7 @@ public sealed partial class OrphanUserDataViewModel : ObservableObject
         if (path is null) return;
         var dir = Directory.Exists(path) ? path : Path.GetDirectoryName(path);
         if (dir is null) return;
-        foreach (var shell in new[] { "wt.exe", "powershell.exe", "cmd.exe" })
-        {
-            try
-            {
-                Process.Start(new ProcessStartInfo(shell)
-                {
-                    UseShellExecute = true,
-                    WorkingDirectory = dir,
-                });
-                return;
-            }
-            catch { /* try next */ }
-        }
+        Cleaner.App.Helpers.TerminalLauncher.OpenIn(dir);
     }
 
     [RelayCommand]

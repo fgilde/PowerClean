@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace Cleaner.App.Helpers;
@@ -88,21 +89,42 @@ public static class PathOpener
         catch (Exception ex) { Cleaner.App.App.LogException("OpenDefault", ex); return false; }
     }
 
-    /// <summary>Windows-Eigenschaften-Dialog für Datei oder Ordner.</summary>
+    /// <summary>
+    /// Windows-Eigenschaften-Dialog für Datei oder Ordner. Process.Start mit Verb="properties"
+    /// ist unzuverlässig (Dialog schließt sich oft sofort wieder weil er an den startenden
+    /// Process gebunden ist). SHObjectProperties öffnet den Dialog stabil — modal zum
+    /// aufrufenden Process, so wie der Explorer das macht.
+    /// </summary>
     public static bool ShowProperties(string path)
     {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        if (!File.Exists(path) && !Directory.Exists(path))
+        {
+            Cleaner.App.App.LogInfo($"ShowProperties: Pfad existiert nicht — {path}");
+            return false;
+        }
+
         try
         {
-            Process.Start(new ProcessStartInfo
-            {
-                FileName = path,
-                Verb = "properties",
-                UseShellExecute = true,
-            });
-            return true;
+            // SHOP_FILEPATH = 0x2 → wir übergeben einen Pfad-String (kein PIDL).
+            bool ok = SHObjectProperties(IntPtr.Zero, SHOP_FILEPATH, path, null);
+            if (!ok) Cleaner.App.App.LogInfo($"ShowProperties: SHObjectProperties returned false für {path}");
+            return ok;
         }
-        catch (Exception ex) { Cleaner.App.App.LogException("ShowProperties", ex); return false; }
+        catch (Exception ex)
+        {
+            Cleaner.App.App.LogException("ShowProperties", ex);
+            return false;
+        }
     }
+
+    const uint SHOP_FILEPATH = 0x00000002;
+
+    [DllImport("shell32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    static extern bool SHObjectProperties(IntPtr hwnd, uint shopObjectType,
+        [MarshalAs(UnmanagedType.LPWStr)] string pszObjectName,
+        [MarshalAs(UnmanagedType.LPWStr)] string? pszPropertyPage);
 
     /// <summary>Als Administrator ausführen (Shell-Verb 'runas') — nur sinnvoll für ausführbare Dateien.</summary>
     public static bool RunAsAdmin(string file)

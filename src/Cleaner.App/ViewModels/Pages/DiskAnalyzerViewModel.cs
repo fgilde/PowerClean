@@ -284,25 +284,7 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
         if (path is null) return;
         var dir = Directory.Exists(path) ? path : System.IO.Path.GetDirectoryName(path);
         if (dir is null) return;
-        try
-        {
-            // Windows Terminal bevorzugt, sonst PowerShell, sonst cmd
-            var preferredShells = new[] { "wt.exe", "powershell.exe", "cmd.exe" };
-            foreach (var shell in preferredShells)
-            {
-                try
-                {
-                    Process.Start(new ProcessStartInfo(shell)
-                    {
-                        UseShellExecute = true,
-                        WorkingDirectory = dir,
-                    });
-                    return;
-                }
-                catch { /* try next */ }
-            }
-        }
-        catch (Exception ex) { Cleaner.App.App.LogException("OpenInTerminal", ex); }
+        Cleaner.App.Helpers.TerminalLauncher.OpenIn(dir);
     }
 
     [RelayCommand]

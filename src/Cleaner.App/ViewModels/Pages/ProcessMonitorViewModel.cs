@@ -84,10 +84,36 @@ public sealed partial class ProcessMonitorViewModel : ObservableObject
                             "Ungespeicherte Daten gehen verloren.",
                 "Prozess beenden", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
             return;
-        if (_monitor.Kill(p.Pid))
+
+        if (_monitor.Kill(p.Pid)) { RefreshOnce(); return; }
+
+        // Standard-Kill hat versagt — Elevated-Kill anbieten
+        var ask = MessageBox.Show(
+            $"Prozess konnte nicht beendet werden.\n\n" +
+            $"Möglich: zu wenig Rechte. Soll PowerClean einen Admin-Kill versuchen?\n" +
+            "(UAC-Dialog erscheint.)",
+            "Cleaner", MessageBoxButton.YesNo, MessageBoxImage.Question);
+        if (ask != MessageBoxResult.Yes) return;
+
+        if (_monitor.KillElevated(p.Pid))
             RefreshOnce();
         else
-            MessageBox.Show("Konnte Prozess nicht beenden.", "Cleaner",
+            MessageBox.Show("Auch Admin-Kill ist fehlgeschlagen. Vermutlich ein geschützter System-Prozess.",
+                "Cleaner", MessageBoxButton.OK, MessageBoxImage.Warning);
+    }
+
+    [RelayCommand]
+    public void KillElevated(ProcessSnapshot? p)
+    {
+        if (p is null) return;
+        if (MessageBox.Show($"Prozess als Admin BEENDEN?\n\n{p.Name} (PID {p.Pid})\n\n" +
+                            "UAC-Dialog wird angezeigt. Ungespeicherte Daten gehen verloren.",
+                "Prozess als Admin beenden", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            return;
+        if (_monitor.KillElevated(p.Pid))
+            RefreshOnce();
+        else
+            MessageBox.Show("Konnte Prozess auch als Admin nicht beenden.", "Cleaner",
                 MessageBoxButton.OK, MessageBoxImage.Warning);
     }
 

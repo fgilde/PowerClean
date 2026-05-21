@@ -22,6 +22,7 @@ public interface IProcessMonitor
 {
     IReadOnlyList<ProcessSnapshot> Snapshot();
     bool Kill(int pid);
+    bool KillElevated(int pid);
     bool OpenFileLocation(int pid);
 }
 
@@ -95,13 +96,87 @@ public sealed class ProcessMonitorService : IProcessMonitor
         catch { return DateTime.MinValue; }
     }
 
+    /// <summary>
+    /// Mehrstufiger Kill: erst .NET-Process.Kill, dann taskkill /F, dann taskkill /F /T.
+    /// taskkill nutzt direkt TerminateProcess auf NT-Ebene und schafft oft mehr als der
+    /// managed-Wrapper (z.B. bei Processes die WM_CLOSE ignorieren oder mehrere Threads
+    /// blockieren).
+    /// </summary>
     public bool Kill(int pid)
+    {
+        // 1. Standard-Kill versuchen
+        try
+        {
+            using var p = Process.GetProcessById(pid);
+            try { p.Kill(entireProcessTree: false); } catch { /* Access denied — taskkill probieren */ }
+            if (p.WaitForExit(2000)) return true;
+        }
+        catch (ArgumentException) { return true; /* Process bereits weg */ }
+        catch { /* weitermachen mit taskkill */ }
+
+        if (!IsAlive(pid)) return true;
+
+        // 2. taskkill /F /PID
+        if (RunTaskkill($"/F /PID {pid}", 2000) && !IsAlive(pid)) return true;
+
+        // 3. taskkill /F /T /PID (entire tree)
+        if (RunTaskkill($"/F /T /PID {pid}", 2000) && !IsAlive(pid)) return true;
+
+        return !IsAlive(pid);
+    }
+
+    /// <summary>
+    /// Erzwingt eine UAC-Elevation und führt taskkill als Admin aus. Sinnvoll wenn der
+    /// normale Kill an Access-Denied scheitert (z.B. bei Processes anderer User oder
+    /// services-internen Workern).
+    /// </summary>
+    public bool KillElevated(int pid)
+    {
+        try
+        {
+            var psi = new ProcessStartInfo
+            {
+                FileName = "taskkill.exe",
+                Arguments = $"/F /T /PID {pid}",
+                UseShellExecute = true,
+                Verb = "runas",
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+            };
+            using var elevated = Process.Start(psi);
+            if (elevated is null) return false;
+            elevated.WaitForExit(5000);
+            return !IsAlive(pid);
+        }
+        catch { return false; }
+    }
+
+    private static bool IsAlive(int pid)
     {
         try
         {
             using var p = Process.GetProcessById(pid);
-            p.Kill(entireProcessTree: false);
-            return p.WaitForExit(3000);
+            return !p.HasExited;
+        }
+        catch (ArgumentException) { return false; }
+        catch { return true; }
+    }
+
+    private static bool RunTaskkill(string args, int timeoutMs)
+    {
+        try
+        {
+            var psi = new ProcessStartInfo("taskkill.exe", args)
+            {
+                UseShellExecute = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
+            };
+            using var proc = Process.Start(psi);
+            if (proc is null) return false;
+            return proc.WaitForExit(timeoutMs);
         }
         catch { return false; }
     }

@@ -184,7 +184,27 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
         // Refresh expandierte Children (nur die sichtbaren VMs)
         foreach (var r in TreeRoots) r.Refresh();
 
+        // Sortierung beibehalten — größte Einträge oben
+        SortObservableByDescendingSize(TreeRoots);
+
         TreeUpdated?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    /// Sortiert eine ObservableCollection in-place per Move-Operationen (Selection-Sort).
+    /// Bewahrt das Container/Selection-State, anders als Clear+Add.
+    /// </summary>
+    internal static void SortObservableByDescendingSize(ObservableCollection<FileSystemNodeViewModel> col)
+    {
+        for (int i = 0; i < col.Count - 1; i++)
+        {
+            int maxIdx = i;
+            for (int j = i + 1; j < col.Count; j++)
+            {
+                if (col[j].Size > col[maxIdx].Size) maxIdx = j;
+            }
+            if (maxIdx != i) col.Move(maxIdx, i);
+        }
     }
 
     [RelayCommand]
@@ -245,6 +265,16 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
         var path = ResolvePath(param);
         if (path is null) return;
         Cleaner.App.Helpers.PathOpener.CopyToClipboard(path);
+    }
+
+    [RelayCommand]
+    public void OpenSystemContextMenu(object? param)
+    {
+        var path = ResolvePath(param);
+        if (path is null) return;
+        var owner = Application.Current?.MainWindow;
+        if (owner is null) return;
+        Cleaner.App.Helpers.ShellContextMenu.ShowFor(owner, path, extendedVerbs: false);
     }
 
     [RelayCommand]

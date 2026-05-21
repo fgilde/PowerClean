@@ -109,7 +109,9 @@
                                 <ItemsControl ItemsSource="{Binding Paths}" Margin="0,8,0,0">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>
-                                            <Grid Margin="8,4">
+                                            <Grid Margin="8,4"
+                                                  ContextMenu="{StaticResource FileSystemPathMenu}"
+                                                  Tag="{Binding}">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />

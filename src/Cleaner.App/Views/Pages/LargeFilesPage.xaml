@@ -70,6 +70,12 @@
                       HeadersVisibility="Column" GridLinesVisibility="None"
                       Background="Transparent" BorderThickness="0"
                       RowBackground="Transparent" AlternatingRowBackground="#08000000">
+                <DataGrid.RowStyle>
+                    <Style TargetType="DataGridRow">
+                        <Setter Property="ContextMenu" Value="{StaticResource FileSystemPathMenu}" />
+                        <Setter Property="Tag" Value="{Binding Path}" />
+                    </Style>
+                </DataGrid.RowStyle>
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="{l:T Col.Name}" Binding="{Binding Path}" Width="*" />
                     <DataGridTextColumn Header="{l:T Col.Size}" Binding="{Binding Size, Converter={StaticResource BytesToSize}}" Width="120" />

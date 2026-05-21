@@ -19,10 +19,12 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDiskScanner, DiskScanner>();
         services.AddSingleton<IDuplicateFinder, DuplicateFinder>();
         services.AddSingleton<ILargeFilesFinder, LargeFilesFinder>();
+        services.AddSingleton<IFolderCompareService, FolderCompareService>();
         services.AddSingleton<IDriveInfoService, DriveInfoService>();
         services.AddSingleton<ICleanerRegistry, CleanerRegistry>();
         services.AddSingleton<IAutostartScanner, AutostartScanner>();
         services.AddSingleton<IInstalledProgramsScanner, InstalledProgramsScanner>();
+        services.AddSingleton<IOrphanUserDataScanner, OrphanUserDataScanner>();
         services.AddSingleton<IServiceScanner, ServiceScanner>();
         services.AddSingleton<IProcessMonitor, ProcessMonitorService>();
         services.AddSingleton<IRegistryScanner, RegistryScanner>();

@@ -13,14 +13,38 @@ public sealed class UpdateService
 {
     private readonly UpdateManager? _mgr;
 
-    public string CurrentVersion { get; }
+    /// <summary>
+    /// Liefert bei einer via Velopack installierten App die echte Paket-Version
+    /// (z.B. nach einem Update). Fallback ist die Assembly-Version. Bewusst ein
+    /// Getter ohne Caching, damit wiederholte Abrufe immer den aktuellen Stand
+    /// vom <see cref="_mgr"/> bekommen.
+    /// </summary>
+    public string CurrentVersion
+    {
+        get
+        {
+            try
+            {
+                if (_mgr?.IsInstalled == true)
+                {
+                    var sv = _mgr.CurrentVersion;
+                    if (sv is not null) return sv.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Cleaner.App.App.LogException("UpdateService.CurrentVersion", ex);
+            }
+
+            var ver = Assembly.GetExecutingAssembly().GetName().Version;
+            return ver is null ? "dev" : $"{ver.Major}.{ver.Minor}.{ver.Build}";
+        }
+    }
+
     public string Repository { get; } = "https://github.com/fgilde/PowerClean";
 
     public UpdateService()
     {
-        var ver = Assembly.GetExecutingAssembly().GetName().Version;
-        CurrentVersion = ver is null ? "dev" : $"{ver.Major}.{ver.Minor}.{ver.Build}";
-
         try
         {
             _mgr = new UpdateManager(new GithubSource(Repository, null, prerelease: false));

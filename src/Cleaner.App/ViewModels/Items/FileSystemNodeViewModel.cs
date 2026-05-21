@@ -41,6 +41,24 @@ public sealed partial class FileSystemNodeViewModel : ObservableObject
     public string FullPath => IsDummy ? "" : Node.FullPath;
     public bool IsDirectory => !IsDummy && Node.IsDirectory;
 
+    /// <summary>
+    /// Anteil der eigenen Größe an der Parent-Größe (0..1). Wird per Convention im
+    /// Template als Balken-Width gerendert. Wenn kein Parent gesetzt oder Parent.Size 0,
+    /// gibt 0 zurück.
+    /// </summary>
+    public double SizePercentOfParent
+    {
+        get
+        {
+            if (IsDummy) return 0;
+            var parent = Node.Parent;
+            if (parent is null) return 0;
+            var p = parent.Size;
+            if (p <= 0) return 0;
+            return Math.Clamp((double)Node.Size / p, 0, 1);
+        }
+    }
+
     [ObservableProperty]
     private bool _isExpanded;
 
@@ -75,6 +93,7 @@ public sealed partial class FileSystemNodeViewModel : ObservableObject
             if (IsDummy) return;
             OnPropertyChanged(nameof(Size));
             OnPropertyChanged(nameof(FileCount));
+            OnPropertyChanged(nameof(SizePercentOfParent));
 
             if (!_childrenLoaded || !IsExpanded) return;
 
@@ -94,10 +113,27 @@ public sealed partial class FileSystemNodeViewModel : ObservableObject
             var snapshot = Children.ToArray();
             foreach (var c in snapshot)
                 if (c.IsExpanded) c.Refresh();
+
+            // Sortierung beibehalten — größte Einträge oben (Move-Operationen behalten
+            // Selection / Expansion-State im TreeView).
+            SortChildrenByDescendingSize();
         }
         catch (Exception ex)
         {
             Cleaner.App.App.LogException("FileSystemNodeViewModel.Refresh", ex);
+        }
+    }
+
+    private void SortChildrenByDescendingSize()
+    {
+        for (int i = 0; i < Children.Count - 1; i++)
+        {
+            int maxIdx = i;
+            for (int j = i + 1; j < Children.Count; j++)
+            {
+                if (Children[j].Size > Children[maxIdx].Size) maxIdx = j;
+            }
+            if (maxIdx != i) Children.Move(maxIdx, i);
         }
     }
 }

@@ -150,81 +150,85 @@
                             </Style>
                         </TreeView.ItemContainerStyle>
                         <TreeView.Resources>
-                            <ContextMenu x:Key="NodeContextMenu">
-                                <MenuItem Header="{l:T DrillIn}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.DrillIntoVmCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="ZoomIn24" /></MenuItem.Icon>
-                                </MenuItem>
-                                <Separator />
-                                <MenuItem Header="{l:T Reveal}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.OpenInExplorerCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="{l:T OpenWith}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.OpenWithCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="Open24" /></MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="{l:T TerminalOpen}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.OpenInTerminalCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="WindowConsole20" /></MenuItem.Icon>
-                                </MenuItem>
-                                <Separator />
-                                <MenuItem Header="{l:T CopyPath}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.CopyPathCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="{l:T WindowsProperties}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.ShowPropertiesCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="Info24" /></MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="{l:T OpenWith}"
-                                          ToolTip="Windows 'Öffnen mit'-Dialog"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.OpenWithDialogCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="AppsListDetail24" /></MenuItem.Icon>
-                                </MenuItem>
-                                <Separator />
-                                <MenuItem Header="{l:T Delete}"
-                                          Command="{Binding PlacementTarget.Tag.ViewModel.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
-                                          CommandParameter="{Binding}">
-                                    <MenuItem.Icon><ui:SymbolIcon Symbol="Delete24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
+                            <!-- Hover-Style für die Node-Border, optisch dezent -->
+                            <Style x:Key="NodeRowBorderStyle" TargetType="Border">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="CornerRadius" Value="4" />
+                                <Setter Property="Padding" Value="4,2" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
 
                             <HierarchicalDataTemplate DataType="{x:Type items:FileSystemNodeViewModel}"
                                                      ItemsSource="{Binding Children}">
-                                <Border ContextMenu="{StaticResource NodeContextMenu}"
-                                        Background="Transparent"
+                                <Border ContextMenu="{StaticResource FileSystemEntryMenu}"
+                                        Style="{StaticResource NodeRowBorderStyle}"
                                         Tag="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}">
                                     <Border.InputBindings>
                                         <MouseBinding MouseAction="LeftDoubleClick"
                                                       Command="{Binding DataContext.ViewModel.DrillIntoVmCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                       CommandParameter="{Binding}" />
                                     </Border.InputBindings>
-                                    <Grid Margin="0,2">
+                                    <Grid Margin="0,4">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
                                             <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="80" />
                                         </Grid.ColumnDefinitions>
-                                        <TextBlock VerticalAlignment="Center"
+                                        <!-- Icon: Folder24 für Verzeichnisse, Document24 für Dateien -->
+                                        <ui:SymbolIcon Grid.Row="0" Grid.Column="0"
+                                                       VerticalAlignment="Center" Margin="0,0,8,0"
+                                                       FontSize="16"
+                                                       Foreground="{DynamicResource TextFillColorSecondaryBrush}">
+                                            <ui:SymbolIcon.Style>
+                                                <Style TargetType="ui:SymbolIcon">
+                                                    <Setter Property="Symbol" Value="Document24" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsDirectory}" Value="True">
+                                                            <Setter Property="Symbol" Value="Folder24" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </ui:SymbolIcon.Style>
+                                        </ui:SymbolIcon>
+                                        <TextBlock Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
                                                    Text="{Binding Name}"
                                                    TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Grid.Column="1" VerticalAlignment="Center"
+                                        <TextBlock Grid.Row="0" Grid.Column="2" VerticalAlignment="Center"
                                                    FontSize="11" Opacity="0.6" Margin="8,0">
                                             <Run Text="{Binding FileCount, Mode=OneWay}" />
                                             <Run Text="x" />
                                         </TextBlock>
-                                        <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                        <TextBlock Grid.Row="0" Grid.Column="3" VerticalAlignment="Center"
                                                    HorizontalAlignment="Right"
                                                    FontWeight="SemiBold"
+                                                   Foreground="{StaticResource CleanerAccentBrush}"
                                                    Text="{Binding Size, Converter={StaticResource BytesToSize}}" />
+                                        <!-- Größen-Anteils-Balken: Width relativ zur Parent-Größe -->
+                                        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
+                                              Height="3" Margin="0,3,0,0"
+                                              HorizontalAlignment="Stretch">
+                                            <Rectangle Fill="{DynamicResource SubtleFillColorSecondaryBrush}"
+                                                       RadiusX="1.5" RadiusY="1.5" />
+                                            <Rectangle HorizontalAlignment="Left"
+                                                       Fill="{StaticResource CleanerAccentBrush}"
+                                                       RadiusX="1.5" RadiusY="1.5">
+                                                <Rectangle.Width>
+                                                    <MultiBinding Converter="{StaticResource PercentToWidth}">
+                                                        <Binding Path="SizePercentOfParent" />
+                                                        <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}" />
+                                                    </MultiBinding>
+                                                </Rectangle.Width>
+                                            </Rectangle>
+                                        </Grid>
                                     </Grid>
                                 </Border>
                             </HierarchicalDataTemplate>

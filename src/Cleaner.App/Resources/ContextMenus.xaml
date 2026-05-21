@@ -1,0 +1,144 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                    xmlns:l="clr-namespace:Cleaner.App.Localization"
+                    xmlns:h="clr-namespace:Cleaner.App.Helpers">
+
+    <!--
+        ============================================================================
+        FileSystemEntryMenu
+        ============================================================================
+        Zentrales Kontextmenü für File-/Folder-Einträge, das von mehreren Pages
+        wiederverwendet wird (DiskAnalyzer, LargeFiles, Duplicates, Programs ...).
+
+        VORAUSSETZUNG / Convention für nutzende ViewModels:
+        Das anklickbare Control (z.B. Border) muss seinen `Tag` so binden, dass über
+        `PlacementTarget.Tag.ViewModel` das ViewModel der Page erreichbar ist:
+
+            Tag="{Binding DataContext,
+                  RelativeSource={RelativeSource AncestorType=UserControl}}"
+
+        Das ViewModel der Page MUSS folgende [RelayCommand]-Properties bereitstellen
+        (Parameter ist jeweils der DataContext-Eintrag, z.B. FileSystemNodeViewModel
+        oder FileSystemNode):
+
+          - OpenInExplorerCommand        Reveal in Explorer
+          - OpenWithCommand              Default-App
+          - OpenWithDialogCommand        Windows "Öffnen mit"-Dialog
+          - OpenInTerminalCommand        Windows Terminal / PowerShell / cmd
+          - CopyPathCommand              Pfad in die Zwischenablage
+          - ShowPropertiesCommand        Windows-Eigenschaften-Dialog
+          - OpenSystemContextMenuCommand Natives Windows-Shell-Kontextmenü
+          - DeleteNodeCommand            Löschen (mit Confirm)
+
+        Optional (nur DiskAnalyzer — bei anderen Pages bleibt der Eintrag invisible
+        weil das Command nicht resolved werden kann, wird aber nicht aktiv):
+          - DrillIntoVmCommand           Reinzoomen
+
+        Die DrillIn-Sichtbarkeit wird per FallbackValue/Resolving gesteuert: wenn
+        das ViewModel kein DrillIntoVmCommand hat, bleibt das MenuItem disabled.
+    -->
+    <ContextMenu x:Key="FileSystemEntryMenu" x:Shared="False">
+        <MenuItem Header="{l:T DrillIn}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.DrillIntoVmCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="ZoomIn24" /></MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{l:T Reveal}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenInExplorerCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T OpenWith}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenWithCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Open24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T TerminalOpen}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenInTerminalCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="WindowConsole20" /></MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{l:T CopyPath}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.CopyPathCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T WindowsProperties}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.ShowPropertiesCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Info24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T OpenWith}"
+                  ToolTip="Windows 'Öffnen mit'-Dialog"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenWithDialogCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="AppsListDetail24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T OpenSystemContextMenu}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenSystemContextMenuCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="MoreHorizontal24" /></MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{l:T Delete}"
+                  Command="{Binding PlacementTarget.Tag.ViewModel.DeleteNodeCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                  CommandParameter="{Binding}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Delete24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+
+    <!--
+        ============================================================================
+        FileSystemPathMenu
+        ============================================================================
+        Generisches Kontextmenü für Pfad-Strings (ohne ViewModel-Convention).
+        Nutzt statische Commands aus FilePathCommands.cs. ÜBERALL einsetzbar:
+        Container muss seinen `Tag` auf den Pfad-String binden (z.B. Tag="{Binding}"
+        wenn der DataContext ein String ist; oder Tag="{Binding FullPath}" wenn ein
+        Objekt mit FullPath-Property).
+        Kein Delete-Eintrag — Löschen erfordert immer einen page-spezifischen Workflow.
+    -->
+    <ContextMenu x:Key="FileSystemPathMenu" x:Shared="False">
+        <MenuItem Header="{l:T Reveal}"
+                  Command="{x:Static h:FilePathCommands.RevealInExplorer}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T OpenWith}"
+                  Command="{x:Static h:FilePathCommands.OpenDefault}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Open24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T TerminalOpen}"
+                  Command="{x:Static h:FilePathCommands.OpenInTerminal}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="WindowConsole20" /></MenuItem.Icon>
+        </MenuItem>
+        <Separator />
+        <MenuItem Header="{l:T CopyPath}"
+                  Command="{x:Static h:FilePathCommands.CopyPath}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T WindowsProperties}"
+                  Command="{x:Static h:FilePathCommands.ShowProperties}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="Info24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T OpenWith}"
+                  ToolTip="Windows 'Öffnen mit'-Dialog"
+                  Command="{x:Static h:FilePathCommands.OpenWithDialog}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="AppsListDetail24" /></MenuItem.Icon>
+        </MenuItem>
+        <MenuItem Header="{l:T OpenSystemContextMenu}"
+                  Command="{x:Static h:FilePathCommands.OpenSystemContextMenu}"
+                  CommandParameter="{Binding PlacementTarget.Tag, RelativeSource={RelativeSource AncestorType=ContextMenu}}">
+            <MenuItem.Icon><ui:SymbolIcon Symbol="MoreHorizontal24" /></MenuItem.Icon>
+        </MenuItem>
+    </ContextMenu>
+
+</ResourceDictionary>

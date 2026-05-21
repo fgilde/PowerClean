@@ -70,9 +70,21 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
+                <ui:NavigationViewItem Content="{l:T Nav.FolderCompare}" TargetPageType="{x:Type pages:FolderComparePage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="BranchCompare24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
                 <ui:NavigationViewItem Content="{l:T Nav.LargeFiles}" TargetPageType="{x:Type pages:LargeFilesPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="DocumentSearch24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
+                <ui:NavigationViewItem Content="{l:T Nav.OrphanData}" TargetPageType="{x:Type pages:OrphanUserDataPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="FolderProhibited24" />
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 

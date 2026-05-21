@@ -164,7 +164,9 @@
                                             <ItemsControl ItemsSource="{Binding VisiblePaths}">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Grid Margin="0,1" Background="Transparent">
+                                                        <Grid Margin="0,1" Background="Transparent"
+                                                              ContextMenu="{StaticResource FileSystemPathMenu}"
+                                                              Tag="{Binding}">
                                                             <Grid.ColumnDefinitions>
                                                                 <ColumnDefinition Width="*" />
                                                                 <ColumnDefinition Width="Auto" />

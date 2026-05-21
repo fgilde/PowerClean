@@ -41,6 +41,12 @@ public sealed partial class SettingsViewModel : ObservableObject
         ApplicationThemeManager.Apply(_settings.UseDarkTheme ? ApplicationTheme.Dark : ApplicationTheme.Light);
     }
 
+    /// <summary>
+    /// Erzwingt ein erneutes Lesen der aktuellen Version (z.B. nach Update oder
+    /// beim Öffnen der Settings-Page) und triggert die UI-Aktualisierung.
+    /// </summary>
+    public void RefreshVersion() => OnPropertyChanged(nameof(Version));
+
     [RelayCommand]
     public async Task CheckForUpdatesAsync()
     {
@@ -55,6 +61,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         try
         {
             var info = await _updates.CheckAsync();
+            OnPropertyChanged(nameof(Version));
             if (info is null)
             {
                 UpdateStatus = $"Aktuell auf {Version} — keine Updates verfügbar.";

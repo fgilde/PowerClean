@@ -71,6 +71,7 @@ public partial class App : Application
                 services.AddSingleton<DiskAnalyzerViewModel>();
                 services.AddSingleton<DuplicatesViewModel>();
                 services.AddSingleton<LargeFilesViewModel>();
+                services.AddSingleton<LogFinderViewModel>();
                 services.AddSingleton<FolderCompareViewModel>();
                 services.AddSingleton<OrphanUserDataViewModel>();
                 services.AddSingleton<AutostartViewModel>();
@@ -89,6 +90,7 @@ public partial class App : Application
                 services.AddSingleton<DiskAnalyzerPage>();
                 services.AddSingleton<DuplicatesPage>();
                 services.AddSingleton<LargeFilesPage>();
+                services.AddSingleton<LogFinderPage>();
                 services.AddSingleton<FolderComparePage>();
                 services.AddSingleton<OrphanUserDataPage>();
                 services.AddSingleton<AutostartPage>();

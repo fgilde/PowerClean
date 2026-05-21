@@ -20,6 +20,12 @@ public sealed partial class AppSettings : ObservableObject
     private long _duplicateMinSizeKb = 100;
 
     [ObservableProperty]
+    private string _logFinderPatterns = "*.log, log*.txt, *.tmp, *.temp, *.bak, *.old, *.dmp, *.mdmp";
+
+    [ObservableProperty]
+    private int _logFinderMinAgeDays = 7;
+
+    [ObservableProperty]
     private string _language = Localization.Translations.DetectInitialLanguage();
 
     partial void OnLanguageChanged(string value)

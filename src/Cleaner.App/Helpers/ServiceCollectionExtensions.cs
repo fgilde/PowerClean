@@ -19,6 +19,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IDiskScanner, DiskScanner>();
         services.AddSingleton<IDuplicateFinder, DuplicateFinder>();
         services.AddSingleton<ILargeFilesFinder, LargeFilesFinder>();
+        services.AddSingleton<ILogFinder, LogFinder>();
         services.AddSingleton<IFolderCompareService, FolderCompareService>();
         services.AddSingleton<IDriveInfoService, DriveInfoService>();
         services.AddSingleton<ICleanerRegistry, CleanerRegistry>();

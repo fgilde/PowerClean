@@ -82,6 +82,12 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
+                <ui:NavigationViewItem Content="{l:T Nav.LogFinder}" TargetPageType="{x:Type pages:LogFinderPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="DocumentText24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
                 <ui:NavigationViewItem Content="{l:T Nav.OrphanData}" TargetPageType="{x:Type pages:OrphanUserDataPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="FolderProhibited24" />

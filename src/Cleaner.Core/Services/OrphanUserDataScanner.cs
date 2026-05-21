@@ -79,12 +79,14 @@ public sealed class OrphanUserDataScanner : IOrphanUserDataScanner
         var roaming = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         var local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         var localLow = Path.GetFullPath(Path.Combine(local, "..", "LocalLow"));
+        var programData = Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData);
 
         var roots = new (string Path, string Label)[]
         {
             (roaming, "Roaming"),
             (local, "Local"),
             (localLow, "LocalLow"),
+            (programData, "ProgramData"),
         };
 
         var bag = new ConcurrentBag<OrphanUserDataEntry>();

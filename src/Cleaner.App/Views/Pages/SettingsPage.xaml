@@ -54,6 +54,20 @@
                 </StackPanel>
             </Border>
 
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
+                    <TextBlock Text="{l:T Settings.LogFinder.Header}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
+                    <TextBlock Text="{l:T Settings.LogFinder.Patterns}" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding ViewModel.Settings.LogFinderPatterns, UpdateSourceTrigger=PropertyChanged}"
+                             AcceptsReturn="False"
+                             ToolTip="{l:T Settings.LogFinder.PatternsHint}" />
+                    <TextBlock Opacity="0.6" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap"
+                               Text="{l:T Settings.LogFinder.PatternsHint}" />
+                    <TextBlock Text="{l:T Settings.LogFinder.MinAgeDays}" Margin="0,16,0,4" />
+                    <ui:NumberBox Value="{Binding ViewModel.Settings.LogFinderMinAgeDays}" Minimum="0" Maximum="3650" />
+                </StackPanel>
+            </Border>
+
             <Border Style="{StaticResource Card}">
                 <StackPanel>
                     <TextBlock Text="{l:T Settings.About}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />

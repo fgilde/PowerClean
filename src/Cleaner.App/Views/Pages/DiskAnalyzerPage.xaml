@@ -20,6 +20,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <StackPanel>
@@ -238,8 +239,118 @@
             </Border>
         </Grid>
 
+        <!-- Aufschlüsselung: Dateityp / Alter / größte Dateien -->
+        <Border Grid.Row="4" Style="{StaticResource Card}" Margin="0,16,0,0" Padding="16"
+                Visibility="{Binding ViewModel.HasAnalysis, Converter={StaticResource BoolToVis}}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Nach Dateityp -->
+                <StackPanel Grid.Column="0" Margin="0,0,16,0">
+                    <TextBlock Text="{l:T Disk.ByType}" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding ViewModel.FileTypeBreakdown}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type items:DiskBreakdownStat}">
+                                <Grid Margin="0,3">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Label}" FontSize="12" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1" FontSize="12" Opacity="0.7"
+                                               Text="{Binding Bytes, Converter={StaticResource BytesToSize}}" />
+                                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="6" Margin="0,3,0,0">
+                                        <Rectangle Fill="{DynamicResource SubtleFillColorSecondaryBrush}" RadiusX="3" RadiusY="3" />
+                                        <Rectangle HorizontalAlignment="Left" RadiusX="3" RadiusY="3"
+                                                   Fill="{Binding ColorHex, Converter={StaticResource StringToBrush}}">
+                                            <Rectangle.Width>
+                                                <MultiBinding Converter="{StaticResource PercentToWidth}">
+                                                    <Binding Path="Fraction" />
+                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}" />
+                                                </MultiBinding>
+                                            </Rectangle.Width>
+                                        </Rectangle>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- Nach Alter -->
+                <StackPanel Grid.Column="1" Margin="16,0">
+                    <TextBlock Text="{l:T Disk.ByAge}" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding ViewModel.AgeBreakdown}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type items:DiskBreakdownStat}">
+                                <Grid Margin="0,3">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Label}" FontSize="12" />
+                                    <TextBlock Grid.Row="0" Grid.Column="1" FontSize="12" Opacity="0.7"
+                                               Text="{Binding Bytes, Converter={StaticResource BytesToSize}}" />
+                                    <Grid Grid.Row="1" Grid.ColumnSpan="2" Height="6" Margin="0,3,0,0">
+                                        <Rectangle Fill="{DynamicResource SubtleFillColorSecondaryBrush}" RadiusX="3" RadiusY="3" />
+                                        <Rectangle HorizontalAlignment="Left" RadiusX="3" RadiusY="3"
+                                                   Fill="{Binding ColorHex, Converter={StaticResource StringToBrush}}">
+                                            <Rectangle.Width>
+                                                <MultiBinding Converter="{StaticResource PercentToWidth}">
+                                                    <Binding Path="Fraction" />
+                                                    <Binding Path="ActualWidth" RelativeSource="{RelativeSource AncestorType=Grid}" />
+                                                </MultiBinding>
+                                            </Rectangle.Width>
+                                        </Rectangle>
+                                    </Grid>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+
+                <!-- Größte Dateien -->
+                <StackPanel Grid.Column="2" Margin="16,0,0,0">
+                    <TextBlock Text="{l:T Disk.Largest}" FontWeight="SemiBold" Margin="0,0,0,10" />
+                    <ItemsControl ItemsSource="{Binding ViewModel.LargestFiles}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type m:FileSystemNode}">
+                                <Grid Margin="0,2" Background="Transparent" ToolTip="{Binding FullPath}">
+                                    <Grid.InputBindings>
+                                        <MouseBinding MouseAction="LeftDoubleClick"
+                                                      Command="{Binding DataContext.ViewModel.OpenInExplorerCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                      CommandParameter="{Binding}" />
+                                    </Grid.InputBindings>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Name}" FontSize="12" TextTrimming="CharacterEllipsis" />
+                                    <TextBlock Grid.Column="1" FontSize="12" Margin="8,0,0,0"
+                                               Foreground="{StaticResource CleanerAccentBrush}"
+                                               Text="{Binding Size, Converter={StaticResource BytesToSize}}" />
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
+            </Grid>
+        </Border>
+
         <!-- Status -->
-        <Grid Grid.Row="4" Margin="0,16,0,0">
+        <Grid Grid.Row="5" Margin="0,16,0,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />

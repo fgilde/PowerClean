@@ -8,6 +8,7 @@
     <conv:InverseBooleanToVisibilityConverter x:Key="InverseBoolToVis" />
     <conv:NullToVisibilityConverter x:Key="NullToVis" />
     <conv:PercentToWidthConverter x:Key="PercentToWidth" />
+    <conv:StringToBrushConverter x:Key="StringToBrush" />
     <conv:IntGreaterZeroToVisibilityConverter x:Key="BoolToVisFromInt" />
     <conv:IntZeroToVisibilityConverter x:Key="InverseBoolToVisFromInt" />
 </ResourceDictionary>

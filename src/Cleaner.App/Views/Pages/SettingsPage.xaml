@@ -46,6 +46,24 @@
 
             <Border Style="{StaticResource Card}" Margin="0,0,0,16">
                 <StackPanel>
+                    <TextBlock Text="{l:T Settings.Protection}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,4" />
+                    <TextBlock Text="{l:T Settings.ProtectionDesc}" Opacity="0.7" FontSize="12" Margin="0,0,0,12" TextWrapping="Wrap" />
+                    <TextBlock Text="{l:T Settings.ExclusionPatterns}" Margin="0,0,0,4" />
+                    <TextBox Text="{Binding ViewModel.Settings.ExclusionPatterns, UpdateSourceTrigger=LostFocus}"
+                             AcceptsReturn="True" TextWrapping="Wrap" MinLines="3" MaxLines="8"
+                             VerticalScrollBarVisibility="Auto"
+                             ToolTip="{l:T Settings.ExclusionPatternsHint}" />
+                    <TextBlock Opacity="0.6" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap"
+                               Text="{l:T Settings.ExclusionPatternsHint}" />
+                    <TextBlock Text="{l:T Settings.CleanMinAgeDays}" Margin="0,16,0,4" />
+                    <ui:NumberBox Value="{Binding ViewModel.Settings.CleanMinAgeDays}" Minimum="0" Maximum="3650" />
+                    <TextBlock Opacity="0.6" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap"
+                               Text="{l:T Settings.CleanMinAgeDaysHint}" />
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                <StackPanel>
                     <TextBlock Text="{l:T Settings.Thresholds}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
                     <TextBlock Text="{l:T Settings.LargeFileThreshold}" Margin="0,0,0,4" />
                     <ui:NumberBox Value="{Binding ViewModel.Settings.LargeFileThresholdMb}" Minimum="1" Maximum="100000" />

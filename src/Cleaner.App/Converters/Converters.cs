@@ -98,6 +98,23 @@ public sealed class NullToVisibilityConverter : IValueConverter
         => throw new NotSupportedException();
 }
 
+/// <summary>Wandelt einen Hex-String (#RRGGBB) in einen SolidColorBrush.</summary>
+public sealed class StringToBrushConverter : IValueConverter
+{
+    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    {
+        if (value is string s && !string.IsNullOrWhiteSpace(s))
+        {
+            try { return new SolidColorBrush((Color)ColorConverter.ConvertFromString(s)); }
+            catch { /* fällt auf Grau zurück */ }
+        }
+        return Brushes.Gray;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => throw new NotSupportedException();
+}
+
 public sealed class PercentToWidthConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)

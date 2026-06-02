@@ -94,6 +94,12 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
+                <ui:NavigationViewItem Content="{l:T Nav.History}" TargetPageType="{x:Type pages:CleanupHistoryPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="History24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
                 <ui:NavigationViewItemSeparator />
 
                 <ui:NavigationViewItem Content="{l:T Nav.Autostart}" TargetPageType="{x:Type pages:AutostartPage}">

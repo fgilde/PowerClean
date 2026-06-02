@@ -1,5 +1,10 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 using System.Windows;
+using System.Windows.Data;
 using Cleaner.App.Services;
 using Cleaner.App.ViewModels.Items;
 using Cleaner.Core.Cleaners;
@@ -17,18 +22,49 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
 {
     private readonly AppSettings _settings;
     private readonly RunningTaskRegistry _taskRegistry;
+    private readonly CleanupHistoryService _history;
+    private readonly ProfileService _profiles;
+    private ICollectionView? _itemsView;
+
     protected readonly ICleanerRegistry Registry;
 
     private CancellationTokenSource? _cts;
 
-    protected CleanerPageViewModelBase(ICleanerRegistry registry, AppSettings settings, RunningTaskRegistry taskRegistry)
+    protected CleanerPageViewModelBase(ICleanerRegistry registry, AppSettings settings,
+        RunningTaskRegistry taskRegistry, CleanupHistoryService history, ProfileService profiles)
     {
         Registry = registry;
         _settings = settings;
         _taskRegistry = taskRegistry;
+        _history = history;
+        _profiles = profiles;
+        _profiles.Changed += (_, _) => ReloadProfiles();
+        ReloadProfiles();
     }
 
     public ObservableCollection<CleanupTargetItemViewModel> Items { get; } = new();
+
+    /// <summary>Zugriff auf die App-Einstellungen für UI-Bindings (z. B. der Alters-Filter).</summary>
+    public AppSettings Settings => _settings;
+
+    // --- Profile ----------------------------------------------------------
+    public ObservableCollection<string> ProfileNames { get; } = new();
+
+    [ObservableProperty]
+    private string? _selectedProfileName;
+
+    private void ReloadProfiles()
+    {
+        ProfileNames.Clear();
+        foreach (var p in _profiles.Profiles)
+            ProfileNames.Add(p.Name);
+    }
+
+    // --- Suche ------------------------------------------------------------
+    [ObservableProperty]
+    private string _searchText = string.Empty;
+
+    partial void OnSearchTextChanged(string value) => _itemsView?.Refresh();
 
     [ObservableProperty]
     private bool _isBusy;
@@ -62,12 +98,30 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
             };
             Items.Add(vm);
         }
+
+        _itemsView = CollectionViewSource.GetDefaultView(Items);
+        _itemsView.Filter = FilterItem;
+
         RecomputeSelected();
+    }
+
+    private bool FilterItem(object obj)
+    {
+        if (string.IsNullOrWhiteSpace(SearchText)) return true;
+        if (obj is not CleanupTargetItemViewModel vm) return true;
+        return vm.Name.Contains(SearchText, StringComparison.OrdinalIgnoreCase)
+            || vm.Description.Contains(SearchText, StringComparison.OrdinalIgnoreCase);
     }
 
     private void RecomputeSelected()
     {
         TotalSelectedSize = Items.Where(i => i.IsSelected).Sum(i => i.ScannedSize);
+    }
+
+    /// <summary>Gesamt-"Gefunden"-Wert = Summe der noch nicht aufgeräumten Scan-Größen.</summary>
+    private void RecomputeScanned()
+    {
+        TotalScannedSize = Items.Sum(i => i.ScannedSize);
     }
 
     [RelayCommand(CanExecute = nameof(CanRunScan))]
@@ -144,6 +198,7 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
             _taskRegistry.Complete(bgTask);
             IsBusy = false;
             ScanProgress = 0;
+            RecomputeScanned();
             RecomputeSelected();
             CleanSelectedCommand.NotifyCanExecuteChanged();
             ScanAllCommand.NotifyCanExecuteChanged();
@@ -153,9 +208,23 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
     private bool CanRunScan() => !IsBusy;
 
     [RelayCommand(CanExecute = nameof(CanRunClean))]
-    public async Task CleanSelectedAsync(string? mode = null)
+    public Task CleanSelectedAsync(string? mode = null)
     {
         var selected = Items.Where(i => i.IsSelected && i.HasScanResult && i.ScannedSize > 0).ToList();
+        return CleanItemsAsync(selected, mode);
+    }
+
+    /// <summary>Räumt genau eine Kategorie auf — die anderen behalten ihr Scan-Ergebnis.</summary>
+    [RelayCommand]
+    public Task CleanItemAsync(CleanupTargetItemViewModel? item)
+    {
+        if (item is null || !item.HasScanResult || item.ScannedSize <= 0) return Task.CompletedTask;
+        if (IsBusy) return Task.CompletedTask;
+        return CleanItemsAsync(new List<CleanupTargetItemViewModel> { item }, null);
+    }
+
+    private async Task CleanItemsAsync(List<CleanupTargetItemViewModel> selected, string? mode)
+    {
         if (selected.Count == 0) return;
 
         // Mode entscheidet ob Papierkorb oder endgültig — Override kommt vom Split-Button
@@ -210,8 +279,11 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
 
                     try
                     {
+                        var cleanedPaths = item.LastScan.Paths;
                         var result = await item.Target.CleanAsync(
                             item.LastScan, useRecycleBin, progress, ct);
+
+                        _history.Record(result, item.Name, useRecycleBin, cleanedPaths);
 
                         item.FreedSize = result.FreedBytes;
                         item.FilesDeleted = result.FilesDeleted;
@@ -254,7 +326,10 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
             _taskRegistry.Complete(bgTask);
             IsBusy = false;
             ScanProgress = 0;
+            RecomputeScanned();
             RecomputeSelected();
+            CleanSelectedCommand.NotifyCanExecuteChanged();
+            ScanAllCommand.NotifyCanExecuteChanged();
         }
     }
 
@@ -262,4 +337,127 @@ public abstract partial class CleanerPageViewModelBase : ObservableObject
 
     [RelayCommand]
     public void Cancel() => _cts?.Cancel();
+
+    // --- Profile-Commands -------------------------------------------------
+
+    /// <summary>Wendet das Profil an: hakt genau die enthaltenen Kategorien an.</summary>
+    [RelayCommand]
+    private void ApplyProfile(string? name)
+    {
+        name ??= SelectedProfileName;
+        if (string.IsNullOrWhiteSpace(name)) return;
+        var profile = _profiles.Get(name);
+        if (profile is null) return;
+
+        var ids = new HashSet<string>(profile.TargetIds, StringComparer.OrdinalIgnoreCase);
+        foreach (var item in Items)
+            item.IsSelected = ids.Contains(item.Id);
+
+        StatusText = $"Profil '{name}' angewendet.";
+    }
+
+    /// <summary>Speichert die aktuelle Auswahl als (neues oder überschriebenes) Profil.</summary>
+    [RelayCommand]
+    private void SaveProfileAs()
+    {
+        var name = Cleaner.App.Helpers.InputDialog.Show(
+            "Profil speichern", "Name des Profils:", SelectedProfileName ?? string.Empty);
+        if (string.IsNullOrWhiteSpace(name)) return;
+
+        var selectedIds = Items.Where(i => i.IsSelected).Select(i => i.Id).ToList();
+        _profiles.Save(name, selectedIds);
+        SelectedProfileName = name;
+        StatusText = $"Profil '{name}' gespeichert ({selectedIds.Count} Kategorie(n)).";
+    }
+
+    [RelayCommand]
+    private void DeleteProfile()
+    {
+        var name = SelectedProfileName;
+        if (string.IsNullOrWhiteSpace(name)) return;
+        if (MessageBox.Show($"Profil '{name}' löschen?", "Profil löschen",
+                MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes)
+            return;
+        _profiles.Delete(name);
+        SelectedProfileName = null;
+    }
+
+    // --- Export -----------------------------------------------------------
+
+    /// <summary>Exportiert die aktuellen Scan-Ergebnisse als CSV oder JSON.</summary>
+    [RelayCommand]
+    private void Export()
+    {
+        var scanned = Items.Where(i => i.HasScanResult).ToList();
+        if (scanned.Count == 0)
+        {
+            MessageBox.Show("Keine Scan-Ergebnisse zum Exportieren. Bitte zuerst scannen.",
+                "Export", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
+        var dialog = new Microsoft.Win32.SaveFileDialog
+        {
+            Title = "Scan-Ergebnisse exportieren",
+            FileName = $"powerclean-scan-{DateTime.Now:yyyy-MM-dd-HHmm}",
+            DefaultExt = ".csv",
+            Filter = "CSV (*.csv)|*.csv|JSON (*.json)|*.json",
+        };
+        if (dialog.ShowDialog() != true) return;
+
+        try
+        {
+            var path = dialog.FileName;
+            if (path.EndsWith(".json", StringComparison.OrdinalIgnoreCase))
+                ExportJson(scanned, path);
+            else
+                ExportCsv(scanned, path);
+
+            StatusText = $"Exportiert nach {path}";
+        }
+        catch (Exception ex)
+        {
+            Cleaner.App.App.LogException("Export", ex);
+            MessageBox.Show($"Export fehlgeschlagen:\n{ex.Message}", "Export",
+                MessageBoxButton.OK, MessageBoxImage.Warning);
+        }
+    }
+
+    private static void ExportCsv(IEnumerable<CleanupTargetItemViewModel> items, string path)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("Kategorie;Id;Dateien;Bytes;Pfad");
+        foreach (var i in items)
+        {
+            var paths = i.LastScan?.Paths ?? Array.Empty<string>();
+            if (paths.Count == 0)
+            {
+                sb.AppendLine($"{Csv(i.Name)};{Csv(i.Id)};{i.ScannedFiles};{i.ScannedSize};");
+                continue;
+            }
+            foreach (var p in paths)
+                sb.AppendLine($"{Csv(i.Name)};{Csv(i.Id)};{i.ScannedFiles};{i.ScannedSize};{Csv(p)}");
+        }
+        File.WriteAllText(path, sb.ToString(), new UTF8Encoding(true));
+    }
+
+    private static void ExportJson(IEnumerable<CleanupTargetItemViewModel> items, string path)
+    {
+        var data = items.Select(i => new
+        {
+            i.Name,
+            i.Id,
+            Files = i.ScannedFiles,
+            Bytes = i.ScannedSize,
+            Paths = i.LastScan?.Paths ?? Array.Empty<string>(),
+        });
+        File.WriteAllText(path, JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true }));
+    }
+
+    private static string Csv(string value)
+    {
+        if (value.Contains(';') || value.Contains('"') || value.Contains('\n'))
+            return '"' + value.Replace("\"", "\"\"") + '"';
+        return value;
+    }
 }

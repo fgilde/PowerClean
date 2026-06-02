@@ -14,16 +14,19 @@ public sealed partial class DashboardViewModel : ObservableObject
     private readonly ICleanerRegistry _registry;
     private readonly AppSettings _settings;
     private readonly Cleaner.App.Services.RunningTaskRegistry _taskRegistry;
+    private readonly Cleaner.App.Services.CleanupHistoryService _history;
     private CancellationTokenSource? _cts;
 
     public DashboardViewModel(IDriveInfoService driveInfo, ICleanerRegistry registry, AppSettings settings,
-        Cleaner.App.Services.RunningTaskRegistry taskRegistry)
+        Cleaner.App.Services.RunningTaskRegistry taskRegistry, Cleaner.App.Services.CleanupHistoryService history)
     {
         _driveInfo = driveInfo;
         _registry = registry;
         _settings = settings;
         _taskRegistry = taskRegistry;
+        _history = history;
         Cleaner.App.Localization.L.Current.LanguageChanged += (_, _) => Greeting = BuildGreeting();
+        _history.Changed += (_, _) => Application.Current?.Dispatcher.Invoke(RefreshStats);
         Refresh();
     }
 
@@ -48,6 +51,18 @@ public sealed partial class DashboardViewModel : ObservableObject
     [ObservableProperty]
     private string _scanStatus = string.Empty;
 
+    [ObservableProperty]
+    private long _freedAllTime;
+
+    [ObservableProperty]
+    private long _freedThisMonth;
+
+    [ObservableProperty]
+    private int _healthScore;
+
+    [ObservableProperty]
+    private string _healthLabel = string.Empty;
+
     public bool IsBusy => IsScanning || IsCleaning;
 
     partial void OnIsScanningChanged(bool value) { OnPropertyChanged(nameof(IsBusy)); }
@@ -65,6 +80,30 @@ public sealed partial class DashboardViewModel : ObservableObject
         SuggestedCleanups.Clear();
         foreach (var c in _registry.All.Where(x => x.SafetyLevel <= SafetyLevel.Recommended && x.IsAvailable()))
             SuggestedCleanups.Add(new QuickCleanItem(c));
+
+        RefreshStats();
+    }
+
+    /// <summary>Aktualisiert die Insights-Kacheln (Freigegeben gesamt/Monat, Health-Score).</summary>
+    private void RefreshStats()
+    {
+        FreedAllTime = _history.TotalFreedAllTime;
+
+        var now = DateTime.Now;
+        var monthStart = new DateTimeOffset(new DateTime(now.Year, now.Month, 1));
+        FreedThisMonth = _history.Entries.Where(e => e.CleanedAt >= monthStart).Sum(e => e.FreedBytes);
+
+        // Health-Score = durchschnittlicher freier Speicher über alle Laufwerke (0–100).
+        var drives = Drives.ToList();
+        double freeFraction = drives.Count == 0
+            ? 1.0
+            : drives.Average(d => d.TotalSize <= 0 ? 1.0 : (double)d.FreeSpace / d.TotalSize);
+
+        HealthScore = Math.Clamp((int)Math.Round(freeFraction * 100), 0, 100);
+        var key = HealthScore >= 50 ? "Dashboard.Health.Good"
+                : HealthScore >= 20 ? "Dashboard.Health.Ok"
+                : "Dashboard.Health.Low";
+        HealthLabel = Cleaner.App.Localization.L.Current[key];
     }
 
     [RelayCommand(CanExecute = nameof(CanStartScan))]
@@ -192,7 +231,9 @@ public sealed partial class DashboardViewModel : ObservableObject
                 item.IsCleaning = true;
                 try
                 {
+                    var cleanedPaths = item.LastScan!.Paths;
                     var result = await item.Target.CleanAsync(item.LastScan!, useRecycleBin, null, _cts.Token);
+                    _history.Record(result, item.Name, useRecycleBin, cleanedPaths);
                     freedTotal += result.FreedBytes;
                     item.Freed = result.FreedBytes;
                     item.Size = 0;
@@ -269,7 +310,9 @@ public sealed partial class DashboardViewModel : ObservableObject
             indeterminate: true);
         try
         {
+            var cleanedPaths = item.LastScan.Paths;
             var result = await item.Target.CleanAsync(item.LastScan, useRecycleBin, null, cts.Token);
+            _history.Record(result, item.Name, useRecycleBin, cleanedPaths);
             item.Freed = result.FreedBytes;
             item.Size = 0;
             item.HasResult = false;

@@ -57,6 +57,20 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
 
     public ObservableCollection<FileSystemNode> Breadcrumb { get; } = new();
 
+    /// <summary>Aufschlüsselung nach Dateityp für den aktuellen Ordner.</summary>
+    public ObservableCollection<Items.DiskBreakdownStat> FileTypeBreakdown { get; } = new();
+
+    /// <summary>Aufschlüsselung nach Datei-Alter für den aktuellen Ordner.</summary>
+    public ObservableCollection<Items.DiskBreakdownStat> AgeBreakdown { get; } = new();
+
+    /// <summary>Die größten Einzeldateien im aktuellen Ordner.</summary>
+    public ObservableCollection<FileSystemNode> LargestFiles { get; } = new();
+
+    [ObservableProperty]
+    private bool _hasAnalysis;
+
+    private int _analysisToken;
+
     [ObservableProperty]
     private DriveSummary? _selectedDrive;
 
@@ -161,6 +175,7 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
             _refreshTimer.Stop();
             IsScanning = false;
             try { RefreshLiveView(); } catch (Exception ex) { Cleaner.App.App.LogException("FinalRefresh", ex); }
+            UpdateAnalysis();
             Cleaner.App.App.LogInfo($"Disk-Scan beendet — {session.Root.FileCount} Dateien, {session.Root.Size} bytes");
         }
     }
@@ -216,6 +231,7 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
         if (node is null || !node.IsDirectory) return;
         SetCurrent(node);
         RefreshLiveView();
+        UpdateAnalysis();
     }
 
     [RelayCommand]
@@ -364,13 +380,180 @@ public sealed partial class DiskAnalyzerViewModel : ObservableObject
         if (node is null) return;
         SetCurrent(node);
         RefreshLiveView();
+        UpdateAnalysis();
     }
 
     [RelayCommand]
     public void GoUp()
     {
-        if (CurrentNode?.Parent is { } p) { SetCurrent(p); RefreshLiveView(); }
+        if (CurrentNode?.Parent is { } p) { SetCurrent(p); RefreshLiveView(); UpdateAnalysis(); }
     }
+
+    // ---- Aufschlüsselung (Dateityp / Alter / größte Dateien) ----
+
+    /// <summary>
+    /// Analysiert den Subtree des aktuellen Knotens im Hintergrund und füllt die
+    /// Aufschlüsselungs-Collections. Per Token gegen veraltete Ergebnisse abgesichert.
+    /// </summary>
+    private async void UpdateAnalysis()
+    {
+        var node = CurrentNode;
+        if (node is null) return;
+
+        int token = ++_analysisToken;
+
+        var (types, ages, largest) = await Task.Run(() => Analyze(node));
+
+        if (token != _analysisToken) return; // veraltet — ein neuerer Lauf hat übernommen
+
+        FileTypeBreakdown.Clear();
+        foreach (var t in types) FileTypeBreakdown.Add(t);
+
+        AgeBreakdown.Clear();
+        foreach (var a in ages) AgeBreakdown.Add(a);
+
+        LargestFiles.Clear();
+        foreach (var f in largest) LargestFiles.Add(f);
+
+        HasAnalysis = FileTypeBreakdown.Count > 0;
+    }
+
+    private static (List<Items.DiskBreakdownStat> types, List<Items.DiskBreakdownStat> ages, List<FileSystemNode> largest)
+        Analyze(FileSystemNode root)
+    {
+        var byCategory = new Dictionary<FileCategory, (long bytes, int count)>();
+        var byAge = new Dictionary<int, (long bytes, int count)>(); // bucket-index -> stats
+        var largestHeap = new List<FileSystemNode>();
+        long total = 0;
+        var now = DateTime.UtcNow;
+
+        var stack = new Stack<FileSystemNode>();
+        stack.Push(root);
+        while (stack.Count > 0)
+        {
+            var n = stack.Pop();
+            foreach (var c in n.ChildrenSnapshot())
+            {
+                if (c.IsDirectory) { stack.Push(c); continue; }
+
+                total += c.Size;
+
+                var cat = Classify(c.Name);
+                var cur = byCategory.TryGetValue(cat, out var v) ? v : (0L, 0);
+                byCategory[cat] = (cur.Item1 + c.Size, cur.Item2 + 1);
+
+                int bucket = AgeBucket(now - c.LastWriteUtc);
+                var ac = byAge.TryGetValue(bucket, out var av) ? av : (0L, 0);
+                byAge[bucket] = (ac.Item1 + c.Size, ac.Item2 + 1);
+
+                largestHeap.Add(c);
+            }
+        }
+
+        double denom = total <= 0 ? 1 : total;
+
+        var types = byCategory
+            .OrderByDescending(kv => kv.Value.bytes)
+            .Select(kv => new Items.DiskBreakdownStat
+            {
+                Label = CategoryLabel(kv.Key),
+                Bytes = kv.Value.bytes,
+                FileCount = kv.Value.count,
+                Fraction = kv.Value.bytes / denom,
+                ColorHex = CategoryColor(kv.Key),
+            })
+            .ToList();
+
+        var ages = Enumerable.Range(0, AgeBucketCount)
+            .Where(b => byAge.ContainsKey(b))
+            .Select(b => new Items.DiskBreakdownStat
+            {
+                Label = AgeBucketLabel(b),
+                Bytes = byAge[b].bytes,
+                FileCount = byAge[b].count,
+                Fraction = byAge[b].bytes / denom,
+                ColorHex = AgeBucketColor(b),
+            })
+            .ToList();
+
+        var largest = largestHeap
+            .OrderByDescending(f => f.Size)
+            .Take(12)
+            .ToList();
+
+        return (types, ages, largest);
+    }
+
+    private enum FileCategory { Video, Image, Audio, Archive, Document, Code, App, Other }
+
+    private static FileCategory Classify(string fileName)
+    {
+        var ext = System.IO.Path.GetExtension(fileName).TrimStart('.').ToLowerInvariant();
+        return ext switch
+        {
+            "mp4" or "mkv" or "avi" or "mov" or "wmv" or "flv" or "webm" or "m4v" or "mpg" or "mpeg" or "ts" => FileCategory.Video,
+            "jpg" or "jpeg" or "png" or "gif" or "bmp" or "tif" or "tiff" or "webp" or "heic" or "svg" or "ico" or "raw" or "cr2" or "nef" => FileCategory.Image,
+            "mp3" or "wav" or "flac" or "aac" or "ogg" or "wma" or "m4a" or "opus" => FileCategory.Audio,
+            "zip" or "rar" or "7z" or "tar" or "gz" or "bz2" or "xz" or "iso" or "cab" or "msi" => FileCategory.Archive,
+            "pdf" or "doc" or "docx" or "xls" or "xlsx" or "ppt" or "pptx" or "txt" or "md" or "csv" or "rtf" or "odt" or "ods" => FileCategory.Document,
+            "cs" or "js" or "ts" or "py" or "java" or "cpp" or "c" or "h" or "hpp" or "go" or "rs" or "rb" or "php" or "json" or "xml" or "yml" or "yaml" or "sql" or "sln" or "csproj" => FileCategory.Code,
+            "exe" or "dll" or "sys" or "bin" or "dat" or "pak" => FileCategory.App,
+            _ => FileCategory.Other,
+        };
+    }
+
+    private static string CategoryLabel(FileCategory c) => c switch
+    {
+        FileCategory.Video => "Videos",
+        FileCategory.Image => "Bilder",
+        FileCategory.Audio => "Audio",
+        FileCategory.Archive => "Archive",
+        FileCategory.Document => "Dokumente",
+        FileCategory.Code => "Code/Daten",
+        FileCategory.App => "Programme",
+        _ => "Sonstige",
+    };
+
+    private static string CategoryColor(FileCategory c) => c switch
+    {
+        FileCategory.Video => "#E25563",
+        FileCategory.Image => "#4FA3F7",
+        FileCategory.Audio => "#9B6DE8",
+        FileCategory.Archive => "#E0A23B",
+        FileCategory.Document => "#3DBE8B",
+        FileCategory.Code => "#5BC8D6",
+        FileCategory.App => "#C77DBB",
+        _ => "#8A8A8A",
+    };
+
+    private const int AgeBucketCount = 5;
+
+    private static int AgeBucket(TimeSpan age) => age.TotalDays switch
+    {
+        < 7 => 0,
+        < 30 => 1,
+        < 180 => 2,
+        < 365 => 3,
+        _ => 4,
+    };
+
+    private static string AgeBucketLabel(int bucket) => bucket switch
+    {
+        0 => "< 1 Woche",
+        1 => "1–4 Wochen",
+        2 => "1–6 Monate",
+        3 => "6–12 Monate",
+        _ => "> 1 Jahr",
+    };
+
+    private static string AgeBucketColor(int bucket) => bucket switch
+    {
+        0 => "#3DBE8B",
+        1 => "#7FC241",
+        2 => "#E0A23B",
+        3 => "#E2773B",
+        _ => "#E25563",
+    };
 
     private void SetCurrent(FileSystemNode node)
     {

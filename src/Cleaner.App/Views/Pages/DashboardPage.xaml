@@ -87,6 +87,43 @@
                 </StackPanel>
             </Border>
 
+            <!-- Insights -->
+            <Grid Margin="0,0,0,8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Card}" Margin="0,0,8,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource StatLabel}" Text="{l:T Dashboard.FreedAllTime}" />
+                        <TextBlock Style="{StaticResource StatNumber}"
+                                   Foreground="{StaticResource SafeBrush}"
+                                   Text="{Binding ViewModel.FreedAllTime, Converter={StaticResource BytesToSize}}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource Card}" Margin="8,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource StatLabel}" Text="{l:T Dashboard.FreedThisMonth}" />
+                        <TextBlock Style="{StaticResource StatNumber}"
+                                   Text="{Binding ViewModel.FreedThisMonth, Converter={StaticResource BytesToSize}}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource Card}" Margin="8,0,0,0">
+                    <StackPanel>
+                        <TextBlock Style="{StaticResource StatLabel}" Text="{l:T Dashboard.Health}" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Style="{StaticResource StatNumber}"
+                                       Foreground="{DynamicResource CleanerAccentBrush}"
+                                       Text="{Binding ViewModel.HealthScore}" />
+                            <TextBlock Text="/100" VerticalAlignment="Bottom" Opacity="0.5" Margin="2,0,8,4" />
+                            <TextBlock Text="{Binding ViewModel.HealthLabel}" VerticalAlignment="Bottom"
+                                       Opacity="0.8" Margin="0,0,0,4" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+
             <!-- Drives -->
             <TextBlock Text="{l:T Dashboard.Drives}" FontSize="18" FontWeight="SemiBold" Margin="0,8,0,12" />
             <ItemsControl ItemsSource="{Binding ViewModel.Drives}">

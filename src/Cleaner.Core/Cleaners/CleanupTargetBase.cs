@@ -51,8 +51,15 @@ public abstract class CleanupTargetBase : ICleanupTarget
             int fileCount = 0;
             var paths = new List<string>();
             var errors = new List<string>();
-            var cutoff = MinimumAge.HasValue ? DateTime.UtcNow - MinimumAge.Value : (DateTime?)null;
-            var excludes = ExcludePathSubstrings.ToArray();
+
+            // Effektives Min-Alter: das strengere (= größere) aus Cleaner-Default und globaler Policy.
+            var effectiveAge = MinimumAge;
+            if (GlobalCleanupPolicy.MinimumAge is { } gAge && (effectiveAge is null || gAge > effectiveAge))
+                effectiveAge = gAge;
+            var cutoff = effectiveAge.HasValue ? DateTime.UtcNow - effectiveAge.Value : (DateTime?)null;
+
+            // Cleaner-eigene Ausschlüsse + globale Schutzregeln.
+            var excludes = ExcludePathSubstrings.Concat(GlobalCleanupPolicy.ExcludeSubstrings).ToArray();
 
             foreach (var root in EnumerateCleanupRoots())
             {
@@ -114,6 +121,9 @@ public abstract class CleanupTargetBase : ICleanupTarget
             foreach (var path in scan.Paths)
             {
                 if (ct.IsCancellationRequested) break;
+
+                // Globale Schutzregeln haben immer Vorrang — nie ein geschütztes File löschen.
+                if (GlobalCleanupPolicy.IsExcluded(path)) continue;
 
                 long size = SafeEnumerator.TryGetSize(path);
                 if (_fileSystem.DeleteFile(path, useRecycleBin))

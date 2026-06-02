@@ -74,6 +74,7 @@ public partial class App : Application
                 services.AddSingleton<LogFinderViewModel>();
                 services.AddSingleton<FolderCompareViewModel>();
                 services.AddSingleton<OrphanUserDataViewModel>();
+                services.AddSingleton<CleanupHistoryViewModel>();
                 services.AddSingleton<AutostartViewModel>();
                 services.AddSingleton<InstalledProgramsViewModel>();
                 services.AddSingleton<ServicesViewModel>();
@@ -93,6 +94,7 @@ public partial class App : Application
                 services.AddSingleton<LogFinderPage>();
                 services.AddSingleton<FolderComparePage>();
                 services.AddSingleton<OrphanUserDataPage>();
+                services.AddSingleton<CleanupHistoryPage>();
                 services.AddSingleton<AutostartPage>();
                 services.AddSingleton<InstalledProgramsPage>();
                 services.AddSingleton<ServicesPage>();
@@ -113,11 +115,27 @@ public partial class App : Application
         base.OnStartup(e);
         await _host.StartAsync();
 
+        // Globale Schutzregeln aus den Einstellungen anwenden und auf Änderungen reagieren.
+        var settings = _host.Services.GetRequiredService<AppSettings>();
+        ApplyCleanupPolicy(settings);
+        settings.PropertyChanged += (_, e) =>
+        {
+            if (e.PropertyName is nameof(AppSettings.ExclusionPatterns) or nameof(AppSettings.CleanMinAgeDays))
+                ApplyCleanupPolicy(settings);
+        };
+
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();
 
         // Update-Check im Hintergrund — wenn was Neues da ist, zeig einen unobtrusive Dialog
         _ = CheckForUpdatesOnStartupAsync();
+    }
+
+    private static void ApplyCleanupPolicy(AppSettings s)
+    {
+        Cleaner.Core.Cleaners.GlobalCleanupPolicy.ExcludeSubstrings = s.GetExclusionList();
+        Cleaner.Core.Cleaners.GlobalCleanupPolicy.MinimumAge =
+            s.CleanMinAgeDays > 0 ? TimeSpan.FromDays(s.CleanMinAgeDays) : null;
     }
 
     private async Task CheckForUpdatesOnStartupAsync()

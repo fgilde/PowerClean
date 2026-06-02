@@ -1,5 +1,6 @@
 using Cleaner.App.ViewModels;
 using Cleaner.Core.Cleaners;
+using Cleaner.Core.Cleaners.Apps;
 using Cleaner.Core.Cleaners.Browsers;
 using Cleaner.Core.Cleaners.Developer;
 using Cleaner.Core.Cleaners.Windows;
@@ -12,6 +13,10 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddCleanerCore(this IServiceCollection services)
     {
+        services.AddSingleton<Cleaner.App.Services.AppDataService>();
+        services.AddSingleton<Cleaner.App.Services.CleanupHistoryService>();
+        services.AddSingleton<Cleaner.App.Services.RecycleBinService>();
+        services.AddSingleton<Cleaner.App.Services.ProfileService>();
         services.AddSingleton<AppSettings>();
 
         // Infrastructure
@@ -44,6 +49,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICleanupTarget, DeliveryOptimizationCleaner>();
         services.AddSingleton<ICleanupTarget, PrefetchCleaner>();
         services.AddSingleton<ICleanupTarget, MemoryDumpCleaner>();
+        services.AddSingleton<ICleanupTarget, WindowsOldCleaner>();
 
         // Browser
         services.AddSingleton<ICleanupTarget, ChromeCacheCleaner>();
@@ -60,6 +66,17 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ICleanupTarget, DotNetBuildArtifactsCleaner>();
         services.AddSingleton<ICleanupTarget, NodeModulesCleaner>();
         services.AddSingleton<ICleanupTarget, DockerCleaner>();
+        services.AddSingleton<ICleanupTarget, PipCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, MavenCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, GradleCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, GoCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, CargoCacheCleaner>();
+
+        // App-Caches
+        services.AddSingleton<ICleanupTarget, TeamsCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, SlackCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, DiscordCacheCleaner>();
+        services.AddSingleton<ICleanupTarget, SpotifyCacheCleaner>();
 
         return services;
     }

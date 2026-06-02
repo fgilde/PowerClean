@@ -34,8 +34,12 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <StackPanel Orientation="Horizontal">
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
                     <ui:Button Appearance="Primary"
                                Icon="{ui:SymbolIcon Search24}"
                                Content="{l:T Cleaner.ScanStart}"
@@ -63,7 +67,7 @@
                     </ui:DropDownButton>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
                     <StackPanel Margin="24,0">
                         <TextBlock Style="{StaticResource StatLabel}" Text="{l:T Cleaner.Found}" />
                         <TextBlock FontSize="22" FontWeight="SemiBold"
@@ -83,12 +87,70 @@
                     </StackPanel>
                 </StackPanel>
 
-                <ui:Button Grid.Column="2"
+                <ui:Button Grid.Row="0" Grid.Column="2"
                            Appearance="Caution"
                            Content="{l:T Cancel}"
                            Command="{Binding CancelCommand}"
                            Visibility="{Binding IsBusy, Converter={StaticResource BoolToVis}}"
                            VerticalAlignment="Center" />
+
+                <!-- Zweite Toolbar-Zeile: Profile, Suche, Export -->
+                <Grid Grid.Row="1" Grid.ColumnSpan="3" Margin="0,14,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <ui:SymbolIcon Symbol="Star24" Margin="0,0,8,0" Opacity="0.7" VerticalAlignment="Center" />
+                        <Grid Width="180" VerticalAlignment="Center">
+                            <ComboBox ItemsSource="{Binding ProfileNames}"
+                                      SelectedItem="{Binding SelectedProfileName, Mode=TwoWay}"
+                                      ToolTip="{l:T Cleaner.Profile}" />
+                            <!-- Platzhalter wenn noch keine Profile gespeichert sind -->
+                            <TextBlock Text="{l:T Cleaner.ProfileNone}" Opacity="0.5" FontSize="12"
+                                       Margin="10,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False"
+                                       Visibility="{Binding ProfileNames.Count, Converter={StaticResource InverseBoolToVisFromInt}}" />
+                        </Grid>
+                        <ui:Button Appearance="Secondary" Margin="6,0,0,0" Padding="8,4"
+                                   Icon="{ui:SymbolIcon Checkmark24}"
+                                   Content="{l:T Cleaner.ProfileApply}"
+                                   Command="{Binding ApplyProfileCommand}" />
+                        <ui:Button Appearance="Secondary" Margin="6,0,0,0" Padding="8,4"
+                                   Icon="{ui:SymbolIcon Save24}"
+                                   Content="{l:T Cleaner.ProfileSave}"
+                                   Command="{Binding SaveProfileAsCommand}" />
+                        <ui:Button Appearance="Transparent" Margin="6,0,0,0" Padding="8,4"
+                                   Icon="{ui:SymbolIcon Delete24}"
+                                   ToolTip="{l:T Cleaner.ProfileDelete}"
+                                   Command="{Binding DeleteProfileCommand}" />
+                    </StackPanel>
+
+                    <DockPanel Grid.Column="1" Margin="16,0" LastChildFill="True">
+                        <!-- Alters-Filter: nur Dateien älter als X Tage (global, gilt für alle Cleaner) -->
+                        <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center"
+                                    ToolTip="{l:T Cleaner.OlderThanHint}">
+                            <ui:SymbolIcon Symbol="CalendarClock24" Opacity="0.7" Margin="0,0,6,0" VerticalAlignment="Center" />
+                            <TextBlock Text="{l:T Cleaner.OlderThan}" VerticalAlignment="Center" FontSize="12" Margin="0,0,6,0" />
+                            <ui:NumberBox Width="92" Minimum="0" Maximum="3650"
+                                          Value="{Binding Settings.CleanMinAgeDays, Mode=TwoWay}" />
+                            <TextBlock Text="{l:T Cleaner.Days}" VerticalAlignment="Center" FontSize="12" Margin="6,0,0,0" />
+                        </StackPanel>
+
+                        <ui:TextBox MaxWidth="280" HorizontalAlignment="Right" Margin="16,0,0,0"
+                                    VerticalAlignment="Center"
+                                    PlaceholderText="{l:T Cleaner.Search}"
+                                    Icon="{ui:SymbolIcon Search24}"
+                                    Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged}" />
+                    </DockPanel>
+
+                    <ui:Button Grid.Column="2" Appearance="Secondary" Padding="8,4"
+                               Icon="{ui:SymbolIcon ArrowExport24}"
+                               Content="{l:T Cleaner.Export}"
+                               Command="{Binding ExportCommand}"
+                               VerticalAlignment="Center" />
+                </Grid>
             </Grid>
         </Border>
 
@@ -110,6 +172,7 @@
                                                 <ColumnDefinition Width="*" />
                                                 <ColumnDefinition Width="Auto" />
                                                 <ColumnDefinition Width="120" />
+                                                <ColumnDefinition Width="Auto" />
                                             </Grid.ColumnDefinitions>
                                             <CheckBox IsChecked="{Binding IsSelected}"
                                                       VerticalAlignment="Center" Margin="0,0,12,0" />
@@ -152,6 +215,17 @@
                                                     <Run Text=" Datei(en)" />
                                                 </TextBlock>
                                             </StackPanel>
+
+                                            <!-- Einzel-Aufräumen: räumt nur diese Kategorie, andere Scan-Ergebnisse bleiben erhalten -->
+                                            <ui:Button Grid.Column="4"
+                                                       Appearance="Secondary"
+                                                       Icon="{ui:SymbolIcon Delete24}"
+                                                       Content="{l:T Cleaner.CleanThis}"
+                                                       VerticalAlignment="Center" Margin="12,0,0,0"
+                                                       IsEnabled="{Binding HasScanResult}"
+                                                       Visibility="{Binding HasScanResult, Converter={StaticResource BoolToVis}}"
+                                                       Command="{Binding DataContext.CleanItemCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                       CommandParameter="{Binding}" />
                                         </Grid>
                                     </Expander.Header>
 

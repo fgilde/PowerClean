@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerClean — Dokumentation &amp; Hilfe</title>
+    <meta name="description" content="Vollständige Dokumentation und Hilfe zu PowerClean: jeder Bereich, jedes Feature und alle Einstellungen erklärt." />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%239d4edd' d='M13 2 4 14h6l-1 8 9-12h-6z'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+    <div class="wrap nav-inner">
+        <a class="brand" href="index.html">
+            <span class="logo"><svg viewBox="0 0 24 24"><path fill="#fff" d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></span>
+            PowerClean
+        </a>
+        <div class="nav-links">
+            <a href="index.html">Startseite</a>
+            <a href="index.html#features">Features</a>
+            <a href="index.html#compare">Vergleich</a>
+            <a href="https://github.com/fgilde/PowerClean" target="_blank" rel="noopener">GitHub</a>
+            <a class="nav-cta" href="index.html#download">Download</a>
+        </div>
+    </div>
+</nav>
+
+<div class="wrap docs-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="docs-side">
+        <h4>Start</h4>
+        <a href="#intro">Was ist PowerClean?</a>
+        <a href="#install">Installation &amp; Update</a>
+        <a href="#safety-model">Sicherheitskonzept</a>
+        <h4>Aufräumen</h4>
+        <a href="#dashboard">Übersicht (Dashboard)</a>
+        <a href="#system">System aufräumen</a>
+        <a href="#developer">Developer-Cleaner</a>
+        <a href="#history">Verlauf &amp; Wiederherstellen</a>
+        <h4>Analysieren</h4>
+        <a href="#analyzer">Disk-Analyzer</a>
+        <a href="#duplicates">Duplikate</a>
+        <a href="#folder-compare">Ordner vergleichen</a>
+        <a href="#large-files">Große Dateien</a>
+        <a href="#log-finder">Log-Finder</a>
+        <a href="#orphan">Verwaiste Userdaten</a>
+        <h4>System &amp; Tuning</h4>
+        <a href="#autostart">Autostart</a>
+        <a href="#programs">Installierte Programme</a>
+        <a href="#services">Dienste</a>
+        <a href="#process">Prozess-Monitor</a>
+        <a href="#registry">Registry-Cleaner</a>
+        <a href="#maintenance">System-Wartung</a>
+        <h4>Konfiguration</h4>
+        <a href="#settings">Einstellungen</a>
+        <a href="#protection">Schutzregeln</a>
+        <a href="#profiles">Profile, Suche &amp; Export</a>
+        <a href="#privacy">Datenschutz</a>
+        <a href="#faq">FAQ</a>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="docs-main">
+        <a class="docs-hero-link" href="index.html">← Zurück zur Startseite</a>
+        <h1>Dokumentation &amp; Hilfe</h1>
+        <p class="lead">Alles, was du über PowerClean wissen musst — jeder Bereich, jedes Feature und alle Einstellungen, verständlich erklärt.</p>
+
+        <!-- INTRO -->
+        <h2 id="intro">Was ist PowerClean?</h2>
+        <p>
+            PowerClean ist ein kostenloses All-in-One-Tool für Windows 10 und 11, um deinen PC aufzuräumen,
+            Speicher freizugeben und das System im Griff zu behalten. Es vereint klassische Cleaner-Funktionen
+            mit einem Disk-Analyzer, Duplikat-Finder, Prozess-Monitor, Autostart- und Dienste-Verwaltung und mehr.
+        </p>
+        <div class="callout safe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <p><b>100 % gratis, keine Werbung, keine Telemetrie.</b> PowerClean sendet keine Nutzungsdaten und blendet keine Werbung ein. Der einzige Netzwerkzugriff ist der optionale Update-Check gegen GitHub.</p>
+        </div>
+
+        <!-- INSTALL -->
+        <h2 id="install">Installation &amp; Update</h2>
+        <h3>Setup oder Portable?</h3>
+        <ul>
+            <li><strong>Setup (.exe):</strong> Installiert PowerClean regulär inkl. Startmenü-Eintrag und aktiviert den integrierten Auto-Updater. Empfohlen für den Dauereinsatz.</li>
+            <li><strong>Portable (.zip):</strong> Einfach entpacken und <code>PowerClean.exe</code> starten — keine Installation, ideal für den USB-Stick. (Auto-Update ist hier nicht aktiv.)</li>
+        </ul>
+        <h3>Updates</h3>
+        <p>
+            Die installierte Version prüft beim Start im Hintergrund auf Updates und bietet dir bei einer neuen
+            Version ein Ein-Klick-Update an. Du kannst auch jederzeit unter <em>Einstellungen → Über</em> manuell
+            nach Updates suchen.
+        </p>
+        <h3>Administrator-Rechte</h3>
+        <p>
+            Die meisten Funktionen laufen ohne Admin-Rechte. Einige Bereiche (z. B. Windows-Update-Cache,
+            <code>C:\Windows\Temp</code>, Windows.old, bestimmte Dienste) benötigen erhöhte Rechte — sie sind mit
+            dem Badge <span class="badge caution">Admin</span> gekennzeichnet. Starte PowerClean als Administrator,
+            um sie vollständig zu nutzen.
+        </p>
+
+        <!-- SAFETY MODEL -->
+        <h2 id="safety-model">Sicherheitskonzept</h2>
+        <p>PowerClean ist „safe by default" aufgebaut. Jede Aufräum-Kategorie trägt eine Sicherheitsstufe:</p>
+        <ul>
+            <li><span class="badge safe">Sicher</span> Kann bedenkenlos gelöscht werden, wird automatisch neu erstellt (z. B. Thumbnail-Cache).</li>
+            <li><span class="badge rec">Empfohlen</span> Löschen sinnvoll, minimale Folgen (z. B. Browser-Cache = evtl. etwas längere Ladezeiten).</li>
+            <li><span class="badge caution">Vorsicht</span> Kann Re-Logins erfordern oder Neuaufbau-Zeit kosten (z. B. IDE-Caches).</li>
+            <li><span class="badge warn">Warnung</span> Möglicherweise unwiderrufliche Folgen (z. B. Windows.old, Memory-Dumps).</li>
+        </ul>
+        <p>Standardmäßig sind nur <span class="badge safe">Sicher</span>- und <span class="badge rec">Empfohlen</span>-Kategorien vorausgewählt. Zusätzlich schützen dich drei Mechanismen:</p>
+        <ul>
+            <li><strong>Papierkorb-Standard:</strong> Gelöschtes geht in den Papierkorb und kann wiederhergestellt werden.</li>
+            <li><strong>Verlauf &amp; Undo:</strong> Jeder Vorgang wird protokolliert (siehe <a href="#history">Verlauf</a>).</li>
+            <li><strong>Schutzregeln:</strong> Bestimmte Pfade und zu junge Dateien bleiben immer unangetastet (siehe <a href="#protection">Schutzregeln</a>).</li>
+        </ul>
+
+        <!-- DASHBOARD -->
+        <h2 id="dashboard">Übersicht (Dashboard)</h2>
+        <img src="img/home-light.png" alt="Dashboard" />
+        <p>Die Startseite ist deine Kommandozentrale:</p>
+        <ul>
+            <li><strong>Quick-Scan:</strong> Scannt in einem Rutsch alle empfohlenen Kategorien.</li>
+            <li><strong>Alles aufräumen:</strong> Räumt die gefundenen Kategorien auf — wahlweise in den Papierkorb oder endgültig (Split-Button).</li>
+            <li><strong>Insights-Kacheln:</strong> „Gesamt freigegeben", „Diesen Monat freigegeben" und ein <strong>Speicher-Gesundheit</strong>-Score (0–100) auf Basis deines freien Speichers.</li>
+            <li><strong>Laufwerke:</strong> Belegung aller Laufwerke auf einen Blick.</li>
+            <li><strong>Windows-Tools:</strong> Schnellzugriff auf Speicheroptimierung, Datenträgerbereinigung, App-Verwaltung und Task-Manager.</li>
+            <li><strong>Empfohlene Aufräumaktionen:</strong> Die wichtigsten Kategorien direkt zum Einzel-Aufräumen.</li>
+        </ul>
+
+        <!-- SYSTEM -->
+        <h2 id="system">System aufräumen</h2>
+        <img src="img/system-clean.png" alt="System aufräumen" />
+        <p>
+            Hier räumst du Windows- und App-Müll auf: Benutzer- und Windows-Temp, Thumbnail- &amp; Icon-Cache,
+            Windows-Update-Cache, Prefetch, Papierkorb, Delivery-Optimization, Memory-Dumps, Browser-Caches
+            (Chrome, Edge, Brave, Firefox) sowie App-Caches von Teams, Slack, Discord und Spotify.
+        </p>
+        <h3>Der typische Ablauf</h3>
+        <ol>
+            <li><strong>Scan starten</strong> — PowerClean ermittelt pro Kategorie Größe und Dateianzahl (parallel, mit Live-Fortschritt).</li>
+            <li>Kategorien per Checkbox <strong>an- oder abwählen</strong>. Aufklappen zeigt die konkreten Pfade.</li>
+            <li><strong>Aufräumen</strong> — entweder „Ausgewählte aufräumen" (alle angehakten) oder der <strong>Aufräumen-Button pro Zeile</strong> für genau eine Kategorie.</li>
+        </ol>
+        <div class="callout safe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <p><b>Andere Ergebnisse bleiben erhalten.</b> Räumst du eine einzelne Kategorie auf, behalten alle anderen ihre Scan-Ergebnisse — du musst nicht neu scannen. Die „Gefunden"-Summe oben aktualisiert sich automatisch.</p>
+        </div>
+        <h3>Werkzeugleiste</h3>
+        <p>Über der Liste findest du <strong>Profile</strong>, den <strong>Alters-Filter</strong> „nur älter als X Tage", die <strong>Suche</strong> und den <strong>Export</strong> — alle im Detail unter <a href="#profiles">Profile, Suche &amp; Export</a>.</p>
+
+        <!-- DEVELOPER -->
+        <h2 id="developer">Developer-Cleaner</h2>
+        <img src="img/dev-clean.png" alt="Developer-Cleaner" />
+        <p>
+            Speziell für Entwickler: Diese Caches und Artefakte belegen oft zweit mehr Platz als vermutet und
+            werden bei Bedarf automatisch neu aufgebaut:
+        </p>
+        <ul>
+            <li><strong>JavaScript:</strong> <code>node_modules</code>, npm-, pnpm- &amp; Yarn-Cache</li>
+            <li><strong>.NET:</strong> NuGet-Cache (HTTP &amp; global), <code>bin/</code> &amp; <code>obj/</code>-Build-Artefakte</li>
+            <li><strong>Weitere:</strong> Docker, Gradle, Maven (<code>.m2</code>), Python pip, Rust Cargo, Go-Module, JetBrains- &amp; Visual-Studio-Caches</li>
+        </ul>
+        <div class="callout">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <p><code>node_modules</code> und Build-Artefakte werden nur in erkannten Projektordnern gesucht (dort, wo eine Projektdatei in der Nähe liegt) — es werden keine zufällig benannten Ordner gelöscht.</p>
+        </div>
+
+        <!-- HISTORY -->
+        <h2 id="history">Verlauf &amp; Wiederherstellen</h2>
+        <p>
+            Jeder Aufräum-Vorgang wird mit Zeitpunkt, Kategorie, Dateianzahl, freigegebener Größe und Modus
+            (Papierkorb / endgültig) festgehalten. Oben siehst du, wie viel du insgesamt freigegeben hast.
+        </p>
+        <ul>
+            <li><strong>Wiederherstellen:</strong> Bei Papierkorb-Löschungen holt PowerClean die Dateien wieder an ihren Ursprungsort zurück — solange sie noch im Papierkorb liegen.</li>
+            <li><strong>Papierkorb öffnen:</strong> Öffnet den Windows-Papierkorb für die manuelle Wiederherstellung.</li>
+            <li><strong>Eintrag entfernen / Verlauf leeren:</strong> Räumt die Verlaufsliste auf (löscht keine Dateien).</li>
+        </ul>
+        <div class="callout warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <p><b>Endgültig gelöscht = weg.</b> Wurde eine Kategorie ohne Papierkorb (endgültig) gelöscht, ist keine Wiederherstellung über PowerClean möglich. Im Zweifel den Papierkorb-Modus nutzen.</p>
+        </div>
+
+        <!-- ANALYZER -->
+        <h2 id="analyzer">Disk-Analyzer</h2>
+        <img src="img/analyzer.png" alt="Disk-Analyzer" />
+        <p>
+            Finde heraus, was deinen Speicher belegt. Wähle ein Laufwerk oder einen Ordner und starte den Scan —
+            die <strong>Treemap</strong> baut sich live auf, große Bereiche = große Ordner.
+        </p>
+        <ul>
+            <li><strong>Drilldown:</strong> Doppelklick öffnet einen Ordner; die Breadcrumb-Leiste führt zurück.</li>
+            <li><strong>Top-Einträge:</strong> Die größten Unterordner/Dateien mit Anteilsbalken.</li>
+            <li><strong>Aufschlüsselung:</strong> Für den aktuellen Ordner nach <strong>Dateityp</strong> (Videos, Bilder, Audio, Archive, Dokumente, Code, Programme), nach <strong>Alter</strong> (Heatmap von „&lt; 1 Woche" bis „&gt; 1 Jahr") und die <strong>größten Einzeldateien</strong>.</li>
+            <li><strong>Aktionen:</strong> Rechtsklick auf einen Eintrag zum Öffnen im Explorer, Terminal, Eigenschaften oder direkten Löschen.</li>
+        </ul>
+
+        <!-- DUPLICATES -->
+        <h2 id="duplicates">Duplikate</h2>
+        <img src="img/duplicates.png" alt="Duplikate" />
+        <p>
+            Findet <strong>exakt identische</strong> Dateien über einen Hash-Vergleich (nicht nur gleiche Namen).
+            Wähle Suchordner und eine Mindestgröße, um Bagatell-Treffer auszublenden. Ergebnisse werden in Gruppen
+            angezeigt; du entscheidest pro Gruppe, welche Kopie bleibt.
+        </p>
+        <div class="callout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><p>Die Mindestgröße stellst du in den <a href="#settings">Einstellungen</a> ein (Standard: 100 KB).</p></div>
+
+        <!-- FOLDER COMPARE -->
+        <h2 id="folder-compare">Ordner vergleichen</h2>
+        <img src="img/folder-compare.png" alt="Ordner vergleichen" />
+        <p>
+            Stellt zwei Ordner gegenüber und zeigt, was nur links, nur rechts oder auf beiden Seiten (identisch
+            oder unterschiedlich) existiert. Praktisch vor einem Backup oder beim Zusammenführen von Sammlungen.
+        </p>
+
+        <!-- LARGE FILES -->
+        <h2 id="large-files">Große Dateien</h2>
+        <p>
+            Listet die größten Dateien ab einem Schwellwert (Standard 100 MB, einstellbar) auf. Sortiere nach
+            Größe und räume gezielt die größten Brocken weg — mit Explorer-Öffnen und Löschen direkt aus der Liste.
+        </p>
+
+        <!-- LOG FINDER -->
+        <h2 id="log-finder">Log-Finder</h2>
+        <img src="img/log-finder.png" alt="Log-Finder" />
+        <p>
+            Spürt alte Log-, Temp- und Backup-Dateien nach Muster und Alter auf. Standard-Muster sind z. B.
+            <code>*.log</code>, <code>*.tmp</code>, <code>*.bak</code>, <code>*.old</code>, <code>*.dmp</code> —
+            anpassbar in den Einstellungen, ebenso das Mindestalter.
+        </p>
+
+        <!-- ORPHAN -->
+        <h2 id="orphan">Verwaiste Userdaten</h2>
+        <img src="img/orphan-scan.png" alt="Verwaiste Userdaten" />
+        <p>
+            Findet zurückgelassene Daten deinstallierter Programme in <code>AppData</code>, <code>ProgramData</code>
+            &amp; Co. Solche „Leichen" bleiben oft jahrelang liegen. PowerClean zeigt Herkunft und Größe, damit du
+            gezielt entscheiden kannst.
+        </p>
+
+        <!-- AUTOSTART -->
+        <h2 id="autostart">Autostart</h2>
+        <img src="img/autostart-mng.png" alt="Autostart verwalten" />
+        <p>
+            Zeigt alle Programme, die mit Windows starten (Registry-Run-Keys, Startmenü-Autostart u. a.). Du kannst
+            Einträge <strong>deaktivieren</strong> oder <strong>entfernen</strong>, den Speicherort im Explorer öffnen,
+            den Befehl kopieren oder die Datei-Eigenschaften ansehen — so verkürzt du deine Boot-Zeit.
+        </p>
+
+        <!-- PROGRAMS -->
+        <h2 id="programs">Installierte Programme</h2>
+        <p>
+            Eine übersichtliche Liste aller installierten Programme mit Größe und Hersteller. Deinstalliere, was du
+            nicht mehr brauchst — schneller als über die Windows-Systemsteuerung.
+        </p>
+
+        <!-- SERVICES -->
+        <h2 id="services">Dienste</h2>
+        <img src="img/services.png" alt="Dienste" />
+        <p>
+            Verwaltet Windows-Dienste: Status ansehen, starten/stoppen und den Starttyp ändern. Nützlich, um
+            unnötige Hintergrunddienste zu bändigen.
+        </p>
+        <div class="callout warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><p>Deaktiviere nur Dienste, die du kennst. Manche werden von Windows benötigt. Änderungen an Diensten erfordern in der Regel Admin-Rechte.</p></div>
+
+        <!-- PROCESS -->
+        <h2 id="process">Prozess-Monitor</h2>
+        <img src="img/process.png" alt="Prozess-Monitor" />
+        <p>
+            Ein leichtgewichtiger Task-Manager-Ersatz mit einem entscheidenden Vorteil: Er beendet auch Prozesse,
+            an denen der Windows-Task-Manager scheitert.
+        </p>
+        <ul>
+            <li><strong>Hängende Prozesse killen:</strong> PowerClean beendet festgefahrene, nicht reagierende Prozesse zuverlässig.</li>
+            <li><strong>Prozessbäume:</strong> Beendet einen Prozess samt aller Kindprozesse.</li>
+            <li><strong>Live-Ressourcen:</strong> CPU- und RAM-Verbrauch in Echtzeit, sortierbar — der Ressourcenfresser steht sofort oben.</li>
+            <li><strong>Suche &amp; Auto-Refresh:</strong> Filtere nach Name/PID; das Aktualisierungsintervall ist einstellbar.</li>
+        </ul>
+
+        <!-- REGISTRY -->
+        <h2 id="registry">Registry-Cleaner</h2>
+        <img src="img/regclean.png" alt="Registry-Cleaner" />
+        <p>
+            Sucht verwaiste und ungültige Registry-Einträge (fehlende Dateiverweise, tote Verknüpfungen u. Ä.) und
+            lässt dich diese kontrolliert entfernen. Du behältst die Auswahl in der Hand.
+        </p>
+        <div class="callout"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg><p>Registry-Aufräumen bringt selten spürbar Tempo, kann aber Altlasten beseitigen. PowerClean bleibt bewusst konservativ und entfernt nur eindeutig verwaiste Einträge.</p></div>
+
+        <!-- MAINTENANCE -->
+        <h2 id="maintenance">System-Wartung</h2>
+        <img src="img/system.png" alt="System-Wartung" />
+        <p>
+            Bündelt gängige Windows-Wartungsaufgaben an einem Ort — etwa Integritätsprüfungen und Wartungs-Kommandos,
+            die man sich sonst als Kommandozeilen-Befehle merken müsste. Mit Live-Ausgabe.
+        </p>
+
+        <!-- SETTINGS -->
+        <h2 id="settings">Einstellungen</h2>
+        <img src="img/settings.png" alt="Einstellungen" />
+        <p>Zentrale Konfiguration — alle Einstellungen werden automatisch gespeichert:</p>
+        <ul>
+            <li><strong>Darstellung:</strong> Dark- oder Light-Mode.</li>
+            <li><strong>Sprache:</strong> Deutsch oder Englisch (sofort umschaltbar).</li>
+            <li><strong>Papierkorb verwenden:</strong> Legt fest, ob standardmäßig in den Papierkorb oder endgültig gelöscht wird.</li>
+            <li><strong>Schwellwerte:</strong> Mindestgröße für „Große Dateien" und für die Duplikat-Suche.</li>
+            <li><strong>Log-Finder:</strong> Datei-Muster und Mindestalter.</li>
+            <li><strong>Schutzregeln:</strong> siehe unten.</li>
+            <li><strong>Über:</strong> Version, Update-Suche und Link zum GitHub-Repo.</li>
+        </ul>
+
+        <!-- PROTECTION -->
+        <h2 id="protection">Schutzregeln</h2>
+        <p>Zwei globale Regeln schützen dich vor versehentlichem Löschen — sie gelten für <strong>alle</strong> Cleaner, beim Scannen und beim Löschen:</p>
+        <ul>
+            <li><strong>Ausschluss-Pfade:</strong> Trage Begriffe/Pfade ein (einer pro Zeile). Jeder Pfad, der einen dieser Begriffe enthält, wird nie angefasst (Teilstring-Vergleich, Groß-/Kleinschreibung egal). Beispiel: <code>\wichtig\</code> oder <code>MeinProjekt</code>.</li>
+            <li><strong>Nur Dateien älter als X Tage:</strong> Schützt kürzlich erstellte Dateien. Bei <code>0</code> gibt es kein Limit.</li>
+        </ul>
+        <div class="callout safe"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><p>Den Alters-Filter erreichst du auch direkt in der Cleaner-Werkzeugleiste („Nur älter als … Tage"). Nach dem Ändern einmal neu scannen, damit die Auswahl greift.</p></div>
+
+        <!-- PROFILES -->
+        <h2 id="profiles">Profile, Suche &amp; Export</h2>
+        <h3>Profile (Presets)</h3>
+        <p>
+            Speichere deine Kategorie-Auswahl als benanntes Profil und wende sie später mit einem Klick wieder an —
+            ideal für wiederkehrende Routinen („Schnell", „Vor Backup", „Developer").
+        </p>
+        <ol>
+            <li>Kategorien anhaken → <strong>Speichern…</strong> → Namen vergeben.</li>
+            <li>Profil im Dropdown wählen → <strong>Anwenden</strong> setzt genau diese Haken.</li>
+            <li>Das Mülleimer-Symbol löscht das gewählte Profil.</li>
+        </ol>
+        <h3>Suche</h3>
+        <p>Das Suchfeld filtert die Kategorien-Liste live nach Name und Beschreibung.</p>
+        <h3>Export</h3>
+        <p>Exportiere die aktuellen Scan-Ergebnisse als <strong>CSV</strong> oder <strong>JSON</strong> (inkl. Kategorie, Dateianzahl, Größe und Pfaden) — z. B. für Reports oder zur Dokumentation.</p>
+
+        <!-- PRIVACY -->
+        <h2 id="privacy">Datenschutz</h2>
+        <p>
+            PowerClean arbeitet vollständig lokal. Es gibt keine Werbung, keine Analytics und keine Weitergabe von
+            Daten. Der einzige ausgehende Netzwerkzugriff ist der optionale Update-Check gegen die GitHub-Releases.
+            Deine Einstellungen, Profile und der Verlauf liegen lokal unter
+            <code>%LocalAppData%\PowerClean</code>.
+        </p>
+
+        <!-- FAQ -->
+        <h2 id="faq">FAQ</h2>
+        <h3>Ist PowerClean wirklich komplett kostenlos?</h3>
+        <p>Ja. Kein Preis, kein „Pro", keine Werbung, kein gebündeltes Beiwerk. Der Quellcode ist offen auf GitHub.</p>
+        <h3>Ist es sicher?</h3>
+        <p>PowerClean ist konservativ ausgelegt: sichere Voreinstellungen, Papierkorb-Standard, Verlauf mit Wiederherstellen und globale Schutzregeln. Trotzdem gilt: Prüfe bei <span class="badge caution">Vorsicht</span>- und <span class="badge warn">Warnung</span>-Kategorien, was du löschst.</p>
+        <h3>Kann ich Gelöschtes zurückholen?</h3>
+        <p>Wenn es in den Papierkorb ging: ja, über den <a href="#history">Verlauf</a>. Bei endgültigem Löschen nicht.</p>
+        <h3>Brauche ich Admin-Rechte?</h3>
+        <p>Für den Großteil nicht. Einige System-Bereiche (mit <span class="badge caution">Admin</span> markiert) benötigen sie — dann PowerClean als Administrator starten.</p>
+        <h3>Läuft es auf Windows 7 / 8?</h3>
+        <p>Offiziell unterstützt sind Windows 10 und 11 (64-bit).</p>
+        <h3>Wo finde ich Hilfe oder melde einen Fehler?</h3>
+        <p>Über die <a href="https://github.com/fgilde/PowerClean/issues" target="_blank" rel="noopener">GitHub-Issues</a>.</p>
+
+        <div class="callout" style="margin-top:40px">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <p><b>Bereit?</b> <a href="index.html#download" style="color:var(--accent);font-weight:600">Lade PowerClean kostenlos herunter</a> — Setup oder Portable.</p>
+        </div>
+    </main>
+</div>
+
+<footer>
+    <div class="wrap foot-inner">
+        <div>© 2026 PowerClean · MIT-Lizenz · von <a href="https://github.com/fgilde" target="_blank" rel="noopener" style="color:var(--muted)">fgilde</a></div>
+        <div class="foot-links">
+            <a href="index.html">Startseite</a>
+            <a href="https://github.com/fgilde/PowerClean" target="_blank" rel="noopener">GitHub</a>
+            <a href="https://github.com/fgilde/PowerClean/releases" target="_blank" rel="noopener">Releases</a>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

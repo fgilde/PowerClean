@@ -79,6 +79,7 @@ public partial class App : Application
                 services.AddSingleton<InstalledProgramsViewModel>();
                 services.AddSingleton<ServicesViewModel>();
                 services.AddSingleton<ProcessMonitorViewModel>();
+                services.AddSingleton<KillProfilesViewModel>();
                 services.AddSingleton<RegistryCleanerViewModel>();
                 services.AddSingleton<SystemMaintenanceViewModel>();
                 services.AddSingleton<SettingsViewModel>();
@@ -99,6 +100,7 @@ public partial class App : Application
                 services.AddSingleton<InstalledProgramsPage>();
                 services.AddSingleton<ServicesPage>();
                 services.AddSingleton<ProcessMonitorPage>();
+                services.AddSingleton<KillProfilesPage>();
                 services.AddSingleton<RegistryCleanerPage>();
                 services.AddSingleton<SystemMaintenancePage>();
                 services.AddSingleton<SettingsPage>();
@@ -123,6 +125,10 @@ public partial class App : Application
             if (e.PropertyName is nameof(AppSettings.ExclusionPatterns) or nameof(AppSettings.CleanMinAgeDays))
                 ApplyCleanupPolicy(settings);
         };
+
+        // Globale Kill-Profil-Shortcuts scharf schalten (Hook braucht den UI-Thread).
+        try { _host.Services.GetRequiredService<Cleaner.App.Services.KillHotkeyService>().Start(); }
+        catch (Exception ex) { LogException("KillHotkeyStart", ex); }
 
         var mainWindow = _host.Services.GetRequiredService<MainWindow>();
         mainWindow.Show();

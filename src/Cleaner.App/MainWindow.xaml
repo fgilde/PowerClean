@@ -126,6 +126,12 @@
                     </ui:NavigationViewItem.Icon>
                 </ui:NavigationViewItem>
 
+                <ui:NavigationViewItem Content="{l:T Nav.KillProfiles}" TargetPageType="{x:Type pages:KillProfilesPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Flash24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+
                 <ui:NavigationViewItemSeparator />
 
                 <ui:NavigationViewItem Content="{l:T Nav.Registry}" TargetPageType="{x:Type pages:RegistryCleanerPage}">

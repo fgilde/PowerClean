@@ -17,6 +17,9 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<Cleaner.App.Services.CleanupHistoryService>();
         services.AddSingleton<Cleaner.App.Services.RecycleBinService>();
         services.AddSingleton<Cleaner.App.Services.ProfileService>();
+        services.AddSingleton<Cleaner.App.Services.KillProfileService>();
+        services.AddSingleton<Cleaner.App.Services.KillHotkeyService>();
+        services.AddSingleton<Cleaner.App.Services.ToastService>();
         services.AddSingleton<AppSettings>();
 
         // Infrastructure
@@ -33,6 +36,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IOrphanUserDataScanner, OrphanUserDataScanner>();
         services.AddSingleton<IServiceScanner, ServiceScanner>();
         services.AddSingleton<IProcessMonitor, ProcessMonitorService>();
+        services.AddSingleton<IProcessKiller, ProcessKillerService>();
         services.AddSingleton<IRegistryScanner, RegistryScanner>();
         services.AddSingleton<ISystemMaintenanceService, SystemMaintenanceService>();
         services.AddSingleton<Cleaner.App.Services.RunningTaskRegistry>();

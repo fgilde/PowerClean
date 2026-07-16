@@ -151,7 +151,7 @@ public sealed class ProcessMonitorService : IProcessMonitor
         catch { return false; }
     }
 
-    private static bool IsAlive(int pid)
+    internal static bool IsAlive(int pid)
     {
         try
         {
@@ -162,7 +162,7 @@ public sealed class ProcessMonitorService : IProcessMonitor
         catch { return true; }
     }
 
-    private static bool RunTaskkill(string args, int timeoutMs)
+    internal static bool RunTaskkill(string args, int timeoutMs)
     {
         try
         {

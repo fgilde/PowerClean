@@ -4,10 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerClean — Gratis Windows-Cleaner, Disk-Analyzer & System-Tool</title>
-    <meta name="description" content="PowerClean räumt Windows auf, analysiert deine Festplatte, beendet hängende Prozesse und mehr. 100 % gratis, keine Werbung, keine Telemetrie — die kostenlose Alternative zu CCleaner." />
+    <meta name="description" content="PowerClean räumt Windows auf, analysiert deine Festplatte, beendet hängende Prozesse und killt ganze Prozessgruppen per Hotkey. 100 % gratis, keine Werbung, keine Telemetrie — die kostenlose Alternative zu CCleaner." />
     <meta property="og:title" content="PowerClean — Gratis Windows-Cleaner & System-Tool" />
-    <meta property="og:description" content="Aufräumen, Disk-Analyse, Prozesse killen, Duplikate finden — 100 % gratis, keine Werbung, Open Source." />
+    <meta property="og:description" content="Aufräumen, Disk-Analyse, Prozesse killen, Kill-Profile mit globalen Hotkeys, Duplikate finden — 100 % gratis, keine Werbung, Open Source." />
     <meta property="og:image" content="img/home.png" />
+    <link rel="canonical" href="https://fgilde.github.io/PowerClean/" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%239d4edd' d='M13 2 4 14h6l-1 8 9-12h-6z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="assets/style.css" />
 </head>
@@ -134,6 +135,7 @@
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Ganze Prozessbäume auf einmal</li>
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Live-Anzeige von CPU &amp; RAM, Sortierung nach Ressourcen</li>
                     <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Suche &amp; Filter, um den Übeltäter sofort zu finden</li>
+                    <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Kill-Profile: ganze Prozessgruppen per globalem Hotkey beenden — sogar per Gamepad</li>
                 </ul>
             </div>
             <div class="spot-shot"><img src="img/process.png" alt="Prozess-Monitor" /></div>
@@ -180,6 +182,7 @@
             <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M18 9a9 9 0 0 1-9 9"/></svg></div><h3>Ordner vergleichen</h3><p>Zwei Ordner gegenüberstellen: was fehlt, was ist neuer, was unterscheidet sich.</p></div>
             <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div><h3>Große Dateien &amp; Logs</h3><p>Spürt die größten Dateien und alte Log-/Temp-Dateien nach Muster und Alter auf.</p></div>
             <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div><h3>Prozess-Monitor</h3><p>Live-CPU/RAM, hängende Prozesse wirklich beenden, ganze Prozessbäume killen.</p></div>
+            <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2 4 14h6l-1 8 9-12h-6z"/></svg></div><h3>Kill-Profile &amp; Hotkeys</h3><p>Prozessgruppen (*chrome*, node* …) mit einem Klick oder globalem Shortcut beenden — Tastatur, Maus oder Gamepad. RAM &amp; CPU sofort frei.</p></div>
             <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/></svg></div><h3>Autostart &amp; Dienste</h3><p>Boot beschleunigen: Autostart-Einträge und Windows-Dienste verwalten, aktivieren, deaktivieren.</p></div>
             <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg></div><h3>Registry-Cleaner</h3><p>Findet verwaiste Registry-Einträge und räumt sie kontrolliert auf.</p></div>
             <div class="feature"><div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-9 9z"/><polyline points="12 7 12 12 15 15"/></svg></div><h3>Verlauf &amp; Undo</h3><p>Jeder Aufräum-Vorgang wird protokolliert — Papierkorb-Löschungen lassen sich wiederherstellen.</p></div>
@@ -212,6 +215,7 @@
                 <tr><td class="feat">Telemetrie / Datensammlung</td><td class="val col-us"><span class="yes">Keine</span></td><td class="val no">Oft</td></tr>
                 <tr><td class="feat">Gebündelte Zusatzsoftware</td><td class="val col-us"><span class="yes">Nie</span></td><td class="val no">Manchmal</td></tr>
                 <tr><td class="feat">Hängende Prozesse killen</td><td class="val col-us"><span class="yes">✓</span></td><td class="val no">—</td></tr>
+                <tr><td class="feat">Kill-Profile mit globalen Hotkeys</td><td class="val col-us"><span class="yes">✓</span></td><td class="val no">—</td></tr>
                 <tr><td class="feat">Disk-Analyzer mit Treemap</td><td class="val col-us"><span class="yes">✓</span></td><td class="val no">Selten</td></tr>
                 <tr><td class="feat">Developer-Caches (npm, Docker …)</td><td class="val col-us"><span class="yes">✓</span></td><td class="val no">—</td></tr>
                 <tr><td class="feat">Wiederherstellen aus Papierkorb</td><td class="val col-us"><span class="yes">✓</span></td><td class="val no">Selten</td></tr>
@@ -267,7 +271,7 @@
 
 <footer>
     <div class="wrap foot-inner">
-        <div>© 2026 PowerClean · MIT-Lizenz · von <a href="https://www.gilde.org/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Florian Gilde | gilde.org</a></div>
+        <div>© 2026 PowerClean · MIT-Lizenz · von <a href="https://florian.gilde.org" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Florian Gilde</a> | <a href="https://www.gilde.org" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">gilde.org</a></div>
         <div class="foot-links">
             <a href="docs.html">Dokumentation</a>
             <a href="https://github.com/fgilde/PowerClean" target="_blank" rel="noopener">GitHub</a>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PowerClean — Dokumentation &amp; Hilfe</title>
     <meta name="description" content="Vollständige Dokumentation und Hilfe zu PowerClean: jeder Bereich, jedes Feature und alle Einstellungen erklärt." />
+    <link rel="canonical" href="https://fgilde.github.io/PowerClean/docs.html" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%239d4edd' d='M13 2 4 14h6l-1 8 9-12h-6z'/%3E%3C/svg%3E" />
     <link rel="stylesheet" href="assets/style.css" />
 </head>
@@ -52,6 +53,7 @@
         <a href="#programs">Installierte Programme</a>
         <a href="#services">Dienste</a>
         <a href="#process">Prozess-Monitor</a>
+        <a href="#killprofiles">Kill-Profile &amp; Hotkeys</a>
         <a href="#registry">Registry-Cleaner</a>
         <a href="#maintenance">System-Wartung</a>
         <h4>Konfiguration</h4>
@@ -279,6 +281,44 @@
             <li><strong>Live-Ressourcen:</strong> CPU- und RAM-Verbrauch in Echtzeit, sortierbar — der Ressourcenfresser steht sofort oben.</li>
             <li><strong>Suche &amp; Auto-Refresh:</strong> Filtere nach Name/PID; das Aktualisierungsintervall ist einstellbar.</li>
         </ul>
+        <p>Für wiederkehrende Fälle („alle Browser zu", „Dev-Prozesse killen") gibt es die <a href="#killprofiles">Kill-Profile</a> — inklusive globaler Shortcuts.</p>
+
+        <!-- KILL PROFILES -->
+        <h2 id="killprofiles">Kill-Profile &amp; Hotkeys</h2>
+        <p>
+            Kill-Profile beenden ganze <strong>Prozessgruppen</strong> mit einem Klick — oder per
+            <strong>globalem Shortcut</strong>, ohne dass PowerClean im Vordergrund sein muss. Perfekt, um vor dem
+            Zocken oder einem großen Build sofort RAM und CPU freizugeben.
+        </p>
+        <h3>Profile anlegen</h3>
+        <ul>
+            <li><strong>Patterns:</strong> Wildcard-Muster wie <code>*chrome*</code>, <code>node*</code> oder <code>slack*</code>, mit <code>;</code> getrennt. Groß-/Kleinschreibung ist egal; <code>chrome.exe</code> und <code>chrome</code> treffen dasselbe.</li>
+            <li><strong>Vorschau:</strong> „Betroffene Prozesse anzeigen" listet live, welche Prozesse das Profil jetzt gerade treffen würde — inklusive RAM-Summe.</li>
+            <li><strong>Mitgelieferte Profile:</strong> Beim ersten Start legt PowerClean sinnvolle Vorlagen an (Browser, Chat &amp; Meetings, Gaming Launcher, Dev Tools) — frei anpassbar oder löschbar.</li>
+        </ul>
+        <h3>Kill-Modi</h3>
+        <ul>
+            <li><strong>Graceful:</strong> Schließt höflich das Hauptfenster (wie ein Klick aufs X). Prozesse ohne Fenster bleiben stehen.</li>
+            <li><strong>Standard:</strong> Der mehrstufige Kill des Prozess-Monitors — erst normal, dann zunehmend härter.</li>
+            <li><strong>ForceTree:</strong> Beendet sofort den kompletten Prozessbaum inklusive aller Kindprozesse.</li>
+            <li><strong>Nuke:</strong> So hart und schnell wie möglich — alle Treffer werden parallel terminiert, ohne Warten. Für den „alles muss sofort weg"-Moment.</li>
+        </ul>
+        <h3>Globale Shortcuts</h3>
+        <p>
+            Jedem Profil lässt sich ein Shortcut zuweisen — eine einzelne Taste, eine Kombination wie
+            <strong>Strg+Alt+K</strong>, eine Maustaste oder sogar <strong>Gamepad-Tasten</strong> (z. B. LT+A).
+            Der Shortcut wirkt <strong>systemweit</strong>, solange PowerClean läuft — auch minimiert. Bei jeder
+            Auslösung erscheint ein Toast unten rechts mit dem Ergebnis („5/7 Prozesse beendet — 2,3 GB RAM frei").
+            Optional lässt sich eine <strong>Mindest-Haltezeit</strong> einstellen, damit nichts versehentlich auslöst.
+        </p>
+        <div class="callout safe">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <p><b>Eingebauter Schutz.</b> Kritische Systemprozesse (csrss, lsass, svchost, dwm …) und PowerClean selbst werden nie beendet — egal welches Pattern du einträgst. Selbst <code>*</code> ist damit ungefährlich für das System.</p>
+        </div>
+        <div class="callout warn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <p><b>Hotkeys fragen nicht nach.</b> Ein Shortcut führt das Profil sofort aus — das ist sein Zweck. Ungespeicherte Daten in getroffenen Programmen gehen verloren. Auf der Seite selbst gibt es vor dem Ausführen weiterhin eine Bestätigung.</p>
+        </div>
 
         <!-- REGISTRY -->
         <h2 id="registry">Registry-Cleaner</h2>
@@ -370,7 +410,7 @@
 
 <footer>
     <div class="wrap foot-inner">
-        <div>© 2026 PowerClean · MIT-Lizenz · von <a href="https://www.gilde.org/" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Florian Gilde | gilde.org</a></div>
+        <div>© 2026 PowerClean · MIT-Lizenz · von <a href="https://florian.gilde.org" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">Florian Gilde</a> | <a href="https://www.gilde.org" target="_blank" rel="noopener" style="color:var(--accent);font-weight:600">gilde.org</a></div>
         <div class="foot-links">
             <a href="index.html">Startseite</a>
             <a href="https://github.com/fgilde/PowerClean" target="_blank" rel="noopener">GitHub</a>

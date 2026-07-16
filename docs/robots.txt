@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://fgilde.github.io/PowerClean/sitemap.xml

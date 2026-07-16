@@ -85,11 +85,15 @@ public sealed partial class SettingsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void OpenRepository()
+    public void OpenRepository() => OpenUrl(Repository);
+
+    [RelayCommand]
+    public void OpenUrl(string? url)
     {
+        if (string.IsNullOrWhiteSpace(url)) return;
         try
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(Repository)
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(url)
             { UseShellExecute = true });
         }
         catch { }

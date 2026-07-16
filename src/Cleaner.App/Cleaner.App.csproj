@@ -5,6 +5,8 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <!-- Nextended.UI (KeyBind-Controls) nutzt WinForms-Typen (Keys/MouseButtons) -->
+    <UseWindowsForms>true</UseWindowsForms>
     <LangVersion>latest</LangVersion>
     <RootNamespace>Cleaner.App</RootNamespace>
     <AssemblyName>PowerClean</AssemblyName>
@@ -31,6 +33,12 @@
     <RuntimeHostConfigurationOption Include="System.Runtime.legacyCorruptedStateExceptionsPolicy" Value="true" />
   </ItemGroup>
   <ItemGroup>
+    <!-- UseWindowsForms fügt sonst ein implizites "global using System.Windows.Forms" hinzu,
+         das mit WPF-Typen (Application, UserControl, ...) kollidiert. -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
@@ -39,6 +47,10 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cleaner.Core\Cleaner.Core.csproj" />
+    <!-- KeyBind-Controls + globale Hotkeys. Für lokale Nextended-Entwicklung stattdessen
+         die ProjectReference unten einkommentieren. -->
+    <PackageReference Include="Nextended.UI" Version="10.1.14" />
+    <!-- <ProjectReference Include="..\..\..\Nextended\Nextended.UI\Nextended.UI.csproj" /> -->
   </ItemGroup>
 
   <ItemGroup>

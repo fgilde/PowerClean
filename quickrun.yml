@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://fgilde.github.io/QuickRun/quickrun.schema.json
+name: PowerClean
+description: "The WPF cleaner. Windows only, because of WPF and the Windows App SDK."
+
+requires:
+  - tool: dotnet
+    version: ">=10.0"
+    install: https://dotnet.microsoft.com/download
+
+setup:
+  - run: dotnet restore
+    when: windows
+
+tasks:
+  - name: app
+    run:
+      windows: dotnet run --project src/Cleaner.App
+      linux: echo "PowerClean is a WPF application and runs on Windows only."
+      macos: echo "PowerClean is a WPF application and runs on Windows only."

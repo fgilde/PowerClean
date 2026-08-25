@@ -17,3 +17,6 @@ tasks:
       windows: dotnet run --project src/Cleaner.App
       linux: echo "PowerClean is a WPF application and runs on Windows only."
       macos: echo "PowerClean is a WPF application and runs on Windows only."
+    # A desktop app is up when its window is up, not when dotnet started building it. QuickRun
+    # shows the process id and brings that window to the front once it appears.
+    readyWhen: {window: true}

@@ -2,6 +2,7 @@
 
 A modern Windows 11 WPF app that combines the best of **CCleaner** (safe cleanup) and **WinDirStat** (visual disk analysis) — with extras like a registry cleaner, autostart manager, services and process monitor, and system maintenance one-clicks.
 
+[![QuickRun](https://fgilde.github.io/QuickRun/badge.svg)](https://fgilde.github.io/QuickRun/run?repo=owner/repo)
 [![Release](https://img.shields.io/github/v/release/fgilde/PowerClean?display_name=tag&sort=semver)](https://github.com/fgilde/PowerClean/releases/latest)
 [![Build](https://github.com/fgilde/PowerClean/actions/workflows/release.yml/badge.svg)](https://github.com/fgilde/PowerClean/actions/workflows/release.yml)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)

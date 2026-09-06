@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<Cleaner.App.Services.KillProfileService>();
         services.AddSingleton<Cleaner.App.Services.KillHotkeyService>();
         services.AddSingleton<Cleaner.App.Services.ToastService>();
+        services.AddSingleton<Cleaner.App.Services.GridViewService>();
         services.AddSingleton<AppSettings>();
 
         // Infrastructure

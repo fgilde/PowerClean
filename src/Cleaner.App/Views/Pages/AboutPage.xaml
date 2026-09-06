@@ -1,0 +1,181 @@
+<UserControl x:Class="Cleaner.App.Views.Pages.AboutPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
+      xmlns:l="clr-namespace:Cleaner.App.Localization"
+      mc:Ignorable="d"
+      d:DataContext="{d:DesignInstance Type=vm:AboutViewModel}">
+
+    <UserControl.Resources>
+        <!-- Gold-Verlauf des gilde.org-Logos (1:1 aus dem Original-SVG) -->
+        <LinearGradientBrush x:Key="GildeGold" StartPoint="0,0" EndPoint="1,1">
+            <GradientStop Color="#FFE6A8" Offset="0" />
+            <GradientStop Color="#E0A24E" Offset="0.45" />
+            <GradientStop Color="#A9761F" Offset="1" />
+        </LinearGradientBrush>
+    </UserControl.Resources>
+
+    <UserControl.Triggers>
+        <EventTrigger RoutedEvent="Loaded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <!-- App-Icon: sanft einschweben -->
+                    <DoubleAnimation Storyboard.TargetName="AppIcon" Storyboard.TargetProperty="Opacity"
+                                     From="0" To="1" Duration="0:0:0.6" />
+                    <DoubleAnimation Storyboard.TargetName="AppIconScale" Storyboard.TargetProperty="ScaleX"
+                                     From="0.85" To="1" Duration="0:0:0.6">
+                        <DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.6" /></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="AppIconScale" Storyboard.TargetProperty="ScaleY"
+                                     From="0.85" To="1" Duration="0:0:0.6">
+                        <DoubleAnimation.EasingFunction><BackEase EasingMode="EaseOut" Amplitude="0.6" /></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+
+                    <!-- gilde-G: zeichnet sich selbst (Stroke-Draw-on wie im Original-SVG) -->
+                    <DoubleAnimation Storyboard.TargetName="GPathMain" Storyboard.TargetProperty="StrokeDashOffset"
+                                     From="20" To="0" Duration="0:0:1.4" BeginTime="0:0:0.3">
+                        <DoubleAnimation.EasingFunction><QuadraticEase EasingMode="EaseInOut" /></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                    <DoubleAnimation Storyboard.TargetName="GPathBar" Storyboard.TargetProperty="StrokeDashOffset"
+                                     From="2.2" To="0" Duration="0:0:0.4" BeginTime="0:0:1.5" />
+
+                    <!-- danach: dezentes Gold-Glühen, endlos -->
+                    <DoubleAnimation Storyboard.TargetName="GGlow" Storyboard.TargetProperty="(UIElement.Effect).(DropShadowEffect.BlurRadius)"
+                                     From="6" To="18" Duration="0:0:2.2" BeginTime="0:0:2"
+                                     AutoReverse="True" RepeatBehavior="Forever">
+                        <DoubleAnimation.EasingFunction><SineEase EasingMode="EaseInOut" /></DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </UserControl.Triggers>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel MaxWidth="780" HorizontalAlignment="Center" Margin="40,36,40,48">
+
+            <!-- HERO -->
+            <Grid HorizontalAlignment="Center" Margin="0,0,0,4">
+                <Ellipse Width="180" Height="180" VerticalAlignment="Center" HorizontalAlignment="Center">
+                    <Ellipse.Fill>
+                        <!-- Glow in der Blau-Welt des neuen Icons -->
+                        <RadialGradientBrush>
+                            <GradientStop Color="#663EC5FF" Offset="0" />
+                            <GradientStop Color="#000A84FF" Offset="1" />
+                        </RadialGradientBrush>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <Image x:Name="AppIcon" Width="120" Height="120"
+                       Source="pack://application:,,,/Assets/PowerClean.png"
+                       RenderTransformOrigin="0.5,0.5" Opacity="0">
+                    <Image.RenderTransform>
+                        <ScaleTransform x:Name="AppIconScale" />
+                    </Image.RenderTransform>
+                </Image>
+            </Grid>
+
+            <TextBlock Text="PowerClean" FontSize="42" FontWeight="Bold" HorizontalAlignment="Center" />
+
+            <Border HorizontalAlignment="Center" Margin="0,10,0,0"
+                    Background="{DynamicResource SubtleFillColorSecondaryBrush}"
+                    BorderBrush="{DynamicResource CleanerAccentBrush}"
+                    BorderThickness="1" CornerRadius="12" Padding="12,3">
+                <TextBlock FontSize="12">
+                    <Run Text="Version" Foreground="{DynamicResource TextFillColorSecondaryBrush}" />
+                    <Run Text="{Binding ViewModel.Version, Mode=OneWay}" FontWeight="SemiBold" />
+                </TextBlock>
+            </Border>
+
+            <TextBlock Text="{l:T About.Claim}" HorizontalAlignment="Center" TextAlignment="Center"
+                       Opacity="0.75" Margin="0,14,0,0" TextWrapping="Wrap" MaxWidth="560" />
+
+            <!-- UPDATE -->
+            <StackPanel HorizontalAlignment="Center" Margin="0,22,0,0">
+                <ui:Button Appearance="Primary" HorizontalAlignment="Center"
+                           Icon="{ui:SymbolIcon ArrowSync24}"
+                           Content="{l:T About.CheckUpdates}"
+                           Command="{Binding ViewModel.CheckForUpdatesCommand}" />
+                <TextBlock Text="{Binding ViewModel.UpdateStatus}" HorizontalAlignment="Center"
+                           Opacity="0.7" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap" />
+            </StackPanel>
+
+            <!-- LINKS -->
+            <UniformGrid Columns="2" Margin="0,28,0,0">
+                <ui:CardAction Margin="0,0,8,8" Icon="{ui:SymbolIcon Globe24}"
+                               Command="{Binding ViewModel.OpenUrlCommand}"
+                               CommandParameter="{x:Static vm:AboutViewModel.WebsiteUrl}">
+                    <StackPanel>
+                        <TextBlock Text="{l:T About.Website}" FontWeight="SemiBold" />
+                        <TextBlock Text="fgilde.github.io/PowerClean" FontSize="11" Opacity="0.6" />
+                    </StackPanel>
+                </ui:CardAction>
+                <ui:CardAction Margin="8,0,0,8" Icon="{ui:SymbolIcon Code24}"
+                               Command="{Binding ViewModel.OpenUrlCommand}"
+                               CommandParameter="{Binding ViewModel.Repository}">
+                    <StackPanel>
+                        <TextBlock Text="GitHub" FontWeight="SemiBold" />
+                        <TextBlock Text="{l:T About.SourceCode}" FontSize="11" Opacity="0.6" />
+                    </StackPanel>
+                </ui:CardAction>
+                <ui:CardAction Margin="0,0,8,0" Icon="{ui:SymbolIcon Bug24}"
+                               Command="{Binding ViewModel.OpenUrlCommand}"
+                               CommandParameter="{Binding ViewModel.IssuesUrl}">
+                    <StackPanel>
+                        <TextBlock Text="{l:T About.Issues}" FontWeight="SemiBold" />
+                        <TextBlock Text="{l:T About.IssuesText}" FontSize="11" Opacity="0.6" />
+                    </StackPanel>
+                </ui:CardAction>
+                <ui:CardAction Margin="8,0,0,0" Icon="{ui:SymbolIcon History24}"
+                               Command="{Binding ViewModel.OpenUrlCommand}"
+                               CommandParameter="{Binding ViewModel.ReleasesUrl}">
+                    <StackPanel>
+                        <TextBlock Text="Releases" FontWeight="SemiBold" />
+                        <TextBlock Text="{l:T About.ReleasesText}" FontSize="11" Opacity="0.6" />
+                    </StackPanel>
+                </ui:CardAction>
+            </UniformGrid>
+
+            <!-- GILDE.ORG -->
+            <ui:CardAction Margin="0,24,0,0"
+                           Command="{Binding ViewModel.OpenUrlCommand}"
+                           CommandParameter="{x:Static vm:AboutViewModel.GildeUrl}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Animiertes G-Logo (gilde.org) -->
+                    <Viewbox x:Name="GGlow" Width="64" Height="64" Margin="4,4,18,4">
+                        <Viewbox.Effect>
+                            <DropShadowEffect Color="#E0A24E" BlurRadius="6" ShadowDepth="0" Opacity="0.85" />
+                        </Viewbox.Effect>
+                        <Canvas Width="512" Height="512">
+                            <Path x:Name="GPathMain"
+                                  Data="M376,88 H112 V352 L256,464 400,352 V256 H280"
+                                  Stroke="{StaticResource GildeGold}" StrokeThickness="56"
+                                  StrokeStartLineCap="Square" StrokeEndLineCap="Square" StrokeLineJoin="Miter"
+                                  StrokeDashArray="20 20" StrokeDashOffset="20" />
+                            <Path x:Name="GPathBar"
+                                  Data="M280,216 H400"
+                                  Stroke="{StaticResource GildeGold}" StrokeThickness="56"
+                                  StrokeStartLineCap="Square" StrokeEndLineCap="Square"
+                                  StrokeDashArray="2.2 2.2" StrokeDashOffset="2.2" />
+                        </Canvas>
+                    </Viewbox>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock Text="Florian Gilde" FontWeight="SemiBold" FontSize="15" />
+                        <TextBlock Text="www.gilde.org" Foreground="{DynamicResource CleanerAccentBrush}" FontSize="13" Margin="0,2,0,0" />
+                        <TextBlock Text="{l:T About.GildeText}" FontSize="11" Opacity="0.6" Margin="0,4,0,0" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Grid>
+            </ui:CardAction>
+
+            <TextBlock HorizontalAlignment="Center" Opacity="0.55" FontSize="12" Margin="0,26,0,0"
+                       Text="MIT-Lizenz · © 2026 Florian Gilde" />
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

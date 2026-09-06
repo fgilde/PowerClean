@@ -83,6 +83,7 @@ public partial class App : Application
                 services.AddSingleton<RegistryCleanerViewModel>();
                 services.AddSingleton<SystemMaintenanceViewModel>();
                 services.AddSingleton<SettingsViewModel>();
+                services.AddSingleton<AboutViewModel>();
 
                 // Views
                 services.AddSingleton<MainWindow>();
@@ -104,6 +105,7 @@ public partial class App : Application
                 services.AddSingleton<RegistryCleanerPage>();
                 services.AddSingleton<SystemMaintenancePage>();
                 services.AddSingleton<SettingsPage>();
+                services.AddSingleton<AboutPage>();
             })
             .Build();
 

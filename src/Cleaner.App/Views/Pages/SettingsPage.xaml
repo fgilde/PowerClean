@@ -86,40 +86,6 @@
                 </StackPanel>
             </Border>
 
-            <Border Style="{StaticResource Card}">
-                <StackPanel>
-                    <TextBlock Text="{l:T Settings.About}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12" />
-                    <TextBlock>
-                        <Run Text="PowerClean" FontWeight="SemiBold" />
-                        <Run Text=" · v" />
-                        <Run Text="{Binding ViewModel.Version, Mode=OneWay}" />
-                    </TextBlock>
-                    <TextBlock Opacity="0.7" FontSize="12" Margin="0,8,0,12" TextWrapping="Wrap"
-                               Text="{l:T Settings.AboutText}" />
-                    <StackPanel Orientation="Horizontal">
-                        <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon ArrowSync24}"
-                                   Content="Nach Updates suchen"
-                                   Command="{Binding ViewModel.CheckForUpdatesCommand}"
-                                   IsEnabled="{Binding ViewModel.IsCheckingUpdate, Converter={StaticResource InverseBoolToVis}}" />
-                        <ui:Button Appearance="Secondary" Icon="{ui:SymbolIcon Globe24}"
-                                   Margin="8,0,0,0"
-                                   Content="GitHub-Repo öffnen"
-                                   Command="{Binding ViewModel.OpenRepositoryCommand}" />
-                    </StackPanel>
-                    <TextBlock Margin="0,12,0,0" FontSize="12">
-                        <Hyperlink Command="{Binding ViewModel.OpenUrlCommand}"
-                                   CommandParameter="https://fgilde.github.io/PowerClean/"
-                                   ToolTip="https://fgilde.github.io/PowerClean/">PowerClean-Website</Hyperlink>
-                        <Run Text="  ·  " />
-                        <Hyperlink Command="{Binding ViewModel.OpenUrlCommand}"
-                                   CommandParameter="https://www.gilde.org"
-                                   ToolTip="https://www.gilde.org">www.gilde.org</Hyperlink>
-                    </TextBlock>
-                    <TextBlock Margin="0,8,0,0" Opacity="0.7" FontSize="11"
-                               Text="{Binding ViewModel.UpdateStatus, Mode=OneWay}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
-            </Border>
         </StackPanel>
     </ScrollViewer>
 </UserControl>

@@ -31,6 +31,11 @@ public partial class MainWindow : FluentWindow
         TasksPopup.IsOpen = !TasksPopup.IsOpen;
     }
 
+    private void InfoButton_Click(object sender, RoutedEventArgs e)
+    {
+        RootNavigation.Navigate(typeof(AboutPage));
+    }
+
     protected override void OnSourceInitialized(EventArgs e)
     {
         base.OnSourceInitialized(e);

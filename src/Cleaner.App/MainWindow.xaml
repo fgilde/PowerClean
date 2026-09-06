@@ -32,6 +32,16 @@
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Assets/PowerClean.ico" />
             </ui:TitleBar.Icon>
+            <ui:TitleBar.Header>
+                <!-- Info-Button — überall oben rechts erreichbar, öffnet die About-Seite -->
+                <ui:Button Appearance="Transparent"
+                           Icon="{ui:SymbolIcon Info24}"
+                           ToolTip="{l:T Nav.About}"
+                           Padding="8,4"
+                           Margin="0,0,4,0"
+                           WindowChrome.IsHitTestVisibleInChrome="True"
+                           Click="InfoButton_Click" />
+            </ui:TitleBar.Header>
         </ui:TitleBar>
 
         <ui:NavigationView x:Name="RootNavigation"
@@ -148,6 +158,11 @@
             </ui:NavigationView.MenuItems>
 
             <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Content="{l:T Nav.About}" TargetPageType="{x:Type pages:AboutPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Info24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
                 <ui:NavigationViewItem Content="{l:T Nav.Settings}" TargetPageType="{x:Type pages:SettingsPage}">
                     <ui:NavigationViewItem.Icon>
                         <ui:SymbolIcon Symbol="Settings24" />

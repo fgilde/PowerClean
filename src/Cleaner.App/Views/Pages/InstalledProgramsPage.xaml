@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
       xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
       xmlns:core="clr-namespace:Cleaner.Core.Services;assembly=Cleaner.Core"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance Type=vm:InstalledProgramsViewModel}">
@@ -24,97 +25,66 @@
         </StackPanel>
 
         <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,16">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon Search24}"
-                           Content="{l:T Cleaner.ScanStart}" Command="{Binding ViewModel.ScanCommand}" />
-                <ui:TextBox Grid.Column="1" Margin="16,0"
-                            PlaceholderText="{l:T Programs.SearchPlaceholder}"
-                            Text="{Binding ViewModel.Filter, UpdateSourceTrigger=PropertyChanged}" />
-                <StackPanel Grid.Column="2" Orientation="Horizontal">
-                    <TextBlock Text="{l:T Sort}" VerticalAlignment="Center" Margin="0,0,8,0" />
-                    <ComboBox SelectedValue="{Binding ViewModel.SortMode}"
-                              SelectedValuePath="Content" Width="130">
-                        <ComboBoxItem Content="Größe" />
-                        <ComboBoxItem Content="Name" />
-                        <ComboBoxItem Content="Datum" />
-                        <ComboBoxItem Content="Herausgeber" />
-                    </ComboBox>
-                </StackPanel>
-            </Grid>
+            <ui:Button Appearance="Primary" Icon="{ui:SymbolIcon Search24}" HorizontalAlignment="Left"
+                       Content="{l:T Cleaner.ScanStart}" Command="{Binding ViewModel.ScanCommand}" />
         </Border>
 
         <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0">
-            <DataGrid ItemsSource="{Binding ViewModel.ProgramsView}"
-                      AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                      HeadersVisibility="Column" GridLinesVisibility="None"
-                      Background="Transparent" BorderThickness="0"
-                      RowBackground="Transparent" AlternatingRowBackground="#08000000">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="ContextMenu">
-                            <Setter.Value>
-                                <ContextMenu>
-                                    <MenuItem Header="{l:T Reveal}"
-                                              Command="{Binding DataContext.ViewModel.ShowFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              CommandParameter="{Binding}">
-                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{l:T SearchWeb}"
-                                              Command="{Binding DataContext.ViewModel.SearchWebCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              CommandParameter="{Binding}">
-                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Search24" /></MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="{l:T OpenRegistry}"
-                                              Command="{Binding DataContext.ViewModel.OpenRegistryKeyCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              CommandParameter="{Binding}">
-                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Database24" /></MenuItem.Icon>
-                                    </MenuItem>
-                                    <Separator />
-                                    <MenuItem Header="{l:T CopyName}"
-                                              Command="{Binding DataContext.ViewModel.CopyNameCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              CommandParameter="{Binding}">
-                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
-                                    </MenuItem>
-                                    <Separator />
-                                    <MenuItem Header="{l:T Uninstall}"
-                                              Command="{Binding DataContext.ViewModel.UninstallCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                              CommandParameter="{Binding}">
-                                        <MenuItem.Icon><ui:SymbolIcon Symbol="Delete24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
-                                    </MenuItem>
-                                </ContextMenu>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTextColumn Header="{l:T Col.Name}" Binding="{Binding DisplayName}" Width="*" />
-                    <DataGridTextColumn Header="{l:T Col.Publisher}" Binding="{Binding Publisher}" Width="200" />
-                    <DataGridTextColumn Header="{l:T Col.Version}" Binding="{Binding Version}" Width="100" />
-                    <DataGridTextColumn Header="{l:T Col.Size}" Binding="{Binding EstimatedSizeBytes, Converter={StaticResource BytesToSize}}" Width="100" />
-                    <DataGridTextColumn Header="{l:T Col.Installed}" Binding="{Binding InstallDate, StringFormat={}{0:yyyy-MM-dd}}" Width="110" />
-                    <DataGridTemplateColumn Header="" Width="180">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type core:InstalledProgram}">
-                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                                    <ui:Button Appearance="Secondary" Padding="6,2" FontSize="11"
-                                               Icon="{ui:SymbolIcon Folder24}" Content="{l:T Programs.FolderShort}"
-                                               Command="{Binding DataContext.ViewModel.ShowFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                               CommandParameter="{Binding}" />
-                                    <ui:Button Appearance="Danger" Padding="6,2" FontSize="11" Margin="4,0,0,0"
-                                               Icon="{ui:SymbolIcon Delete24}" Content="{l:T Programs.UninstallShort}"
-                                               Command="{Binding DataContext.ViewModel.UninstallCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                               CommandParameter="{Binding}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            <controls:PowerGrid GridId="programs" ItemsSource="{Binding ViewModel.ProgramsView}">
+                <controls:PowerGrid.RowContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="{l:T Reveal}"
+                                  Command="{Binding Tag.ViewModel.ShowFolderCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}">
+                            <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{l:T SearchWeb}"
+                                  Command="{Binding Tag.ViewModel.SearchWebCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}">
+                            <MenuItem.Icon><ui:SymbolIcon Symbol="Search24" /></MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Header="{l:T OpenRegistry}"
+                                  Command="{Binding Tag.ViewModel.OpenRegistryKeyCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}">
+                            <MenuItem.Icon><ui:SymbolIcon Symbol="Database24" /></MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Header="{l:T CopyName}"
+                                  Command="{Binding Tag.ViewModel.CopyNameCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}">
+                            <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
+                        </MenuItem>
+                        <Separator />
+                        <MenuItem Header="{l:T Uninstall}"
+                                  Command="{Binding Tag.ViewModel.UninstallCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}">
+                            <MenuItem.Icon><ui:SymbolIcon Symbol="Delete24" Foreground="{StaticResource WarningBrush}" /></MenuItem.Icon>
+                        </MenuItem>
+                    </ContextMenu>
+                </controls:PowerGrid.RowContextMenu>
+
+                <DataGridTextColumn Header="{l:T Col.Name}" Binding="{Binding DisplayName}" Width="*" />
+                <DataGridTextColumn Header="{l:T Col.Publisher}" Binding="{Binding Publisher}" Width="200" />
+                <DataGridTextColumn Header="{l:T Col.Version}" Binding="{Binding Version}" Width="100" />
+                <DataGridTextColumn Header="{l:T Col.Size}" Binding="{Binding EstimatedSizeBytes, Converter={StaticResource BytesToSize}}" SortMemberPath="EstimatedSizeBytes" Width="100" />
+                <DataGridTextColumn Header="{l:T Col.Installed}" Binding="{Binding InstallDate, StringFormat={}{0:yyyy-MM-dd}}" SortMemberPath="InstallDate" Width="110" />
+                <DataGridTemplateColumn Header="" Width="190" CanUserReorder="False">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="{x:Type core:InstalledProgram}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <ui:Button Appearance="Secondary" Padding="6,2" FontSize="11"
+                                           Icon="{ui:SymbolIcon Folder24}" Content="{l:T Programs.FolderShort}"
+                                           Command="{Binding DataContext.ViewModel.ShowFolderCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                           CommandParameter="{Binding}" />
+                                <ui:Button Appearance="Danger" Padding="6,2" FontSize="11" Margin="4,0,0,0"
+                                           Icon="{ui:SymbolIcon Delete24}" Content="{l:T Programs.UninstallShort}"
+                                           Command="{Binding DataContext.ViewModel.UninstallCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                           CommandParameter="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </controls:PowerGrid>
         </Border>
 
         <StackPanel Grid.Row="3" Margin="0,16,0,0">

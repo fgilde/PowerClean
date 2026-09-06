@@ -56,5 +56,7 @@
   <ItemGroup>
     <!-- Icon auch als Resource einbetten — fürs FluentWindow.Icon Binding -->
     <Resource Include="Assets\PowerClean.ico" />
+    <!-- Großes PNG für die About-Seite (ICO-Decode liefert sonst einen kleinen Frame) -->
+    <Resource Include="Assets\PowerClean.png" />
   </ItemGroup>
 </Project>

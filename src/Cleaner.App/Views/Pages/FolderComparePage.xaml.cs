@@ -18,7 +18,7 @@ public partial class FolderComparePage : INavigableView<FolderCompareViewModel>
 
     private void ResultsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
     {
-        if (sender is System.Windows.Controls.DataGrid grid
+        if (sender is Controls.PowerGrid grid
             && grid.SelectedItem is CompareEntry entry
             && entry.Status == CompareStatus.Different
             && entry.LeftFullPath is not null

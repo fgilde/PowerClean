@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
       xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
       xmlns:core="clr-namespace:Cleaner.Core.Services;assembly=Cleaner.Core"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance Type=vm:SystemMaintenanceViewModel}">
@@ -166,21 +167,15 @@
             <TextBlock Text="{l:T Maintenance.RestorePointsListHeader}" FontSize="16" FontWeight="SemiBold" Margin="0,24,0,12"
                        Visibility="{Binding ViewModel.RestorePointCount, Converter={StaticResource NullToVis}}" />
             <Border Style="{StaticResource Card}" Padding="0" Visibility="{Binding ViewModel.RestorePointCount, Converter={StaticResource NullToVis}}">
-                <DataGrid ItemsSource="{Binding ViewModel.RestorePoints}"
-                          AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                          HeadersVisibility="Column" GridLinesVisibility="None"
-                          Background="Transparent" BorderThickness="0"
-                          RowBackground="Transparent" AlternatingRowBackground="#08000000"
-                          MaxHeight="300">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="#" Binding="{Binding SequenceNumber}" Width="60" />
-                        <DataGridTextColumn Header="{l:T Col.Created}"
-                                            Binding="{Binding CreationTimeUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
-                                            Width="140" />
-                        <DataGridTextColumn Header="{l:T Col.Description}" Binding="{Binding Description}" Width="*" />
-                        <DataGridTextColumn Header="{l:T Col.Type}" Binding="{Binding Type}" Width="160" />
-                    </DataGrid.Columns>
-                </DataGrid>
+                <controls:PowerGrid GridId="maintenance" ItemsSource="{Binding ViewModel.RestorePoints}"
+                                    MaxHeight="340">
+                    <DataGridTextColumn Header="#" Binding="{Binding SequenceNumber}" Width="60" />
+                    <DataGridTextColumn Header="{l:T Col.Created}"
+                                        Binding="{Binding CreationTimeUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                        Width="140" />
+                    <DataGridTextColumn Header="{l:T Col.Description}" Binding="{Binding Description}" Width="*" />
+                    <DataGridTextColumn Header="{l:T Col.Type}" Binding="{Binding Type}" Width="160" />
+                </controls:PowerGrid>
             </Border>
 
             <!-- Log -->

@@ -117,4 +117,17 @@ public sealed partial class AutostartViewModel : ObservableObject
         if (resolved is null) return;
         Cleaner.App.Helpers.PathOpener.OpenDefault(resolved);
     }
+
+    [RelayCommand]
+    public void SearchWeb(AutostartEntry? entry)
+    {
+        if (entry is null) return;
+        var query = System.Net.WebUtility.UrlEncode($"{entry.Name} autostart was ist das");
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo(
+                $"https://www.google.com/search?q={query}") { UseShellExecute = true });
+        }
+        catch (Exception ex) { Cleaner.App.App.LogException("AutostartSearchWeb", ex); }
+    }
 }

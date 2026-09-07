@@ -44,6 +44,22 @@ public sealed class AutostartEntry
         AutostartSource.Service           => "Dienst (Automatisch)",
         _ => Source.ToString(),
     };
+
+    // ===== Empfehlung/Info aus der eingebauten Wissensbasis (lazy, einmal berechnet) =====
+    private AutostartAssessment? _assessment;
+    public AutostartAssessment Assessment => _assessment ??= AutostartAdvisor.Analyze(this);
+
+    public AutostartAdvice Advice => Assessment.Advice;
+    public string AdviceInfo => Assessment.Info;
+
+    public string AdviceLabel => Advice switch
+    {
+        AutostartAdvice.Keep => "Behalten",
+        AutostartAdvice.Optional => "Optional",
+        AutostartAdvice.Unnecessary => "Unnötig",
+        AutostartAdvice.Caution => "Vorsicht",
+        _ => "Unbekannt",
+    };
 }
 
 public interface IAutostartScanner

@@ -7,6 +7,7 @@
       xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
       xmlns:items="clr-namespace:Cleaner.App.ViewModels.Items"
       xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance Type=vm:LogFinderViewModel}"
       >
@@ -129,20 +130,8 @@
         </ItemsControl>
 
         <Border Grid.Row="4" Style="{StaticResource Card}" Padding="0">
-            <DataGrid ItemsSource="{Binding ViewModel.Files}"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="False" CanUserDeleteRows="False"
-                      HeadersVisibility="Column" GridLinesVisibility="None"
-                      Background="Transparent" BorderThickness="0"
-                      RowBackground="Transparent" AlternatingRowBackground="#08000000">
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="ContextMenu" Value="{StaticResource FileSystemPathMenu}" />
-                        <Setter Property="Tag" Value="{Binding Path}" />
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="" Width="40">
+            <controls:PowerGrid GridId="logfinder" ItemsSource="{Binding ViewModel.Files}">
+                    <DataGridTemplateColumn Header="" Width="40" SortMemberPath="IsSelected">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type items:LogFileItemViewModel}">
                                 <CheckBox HorizontalAlignment="Center"
@@ -150,12 +139,22 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                    <DataGridTextColumn Header="{l:T Col.Path}" Binding="{Binding Path}" Width="*" />
+                    <!-- Statisches Pfad-Menü hängt an der Pfad-Zelle (Tag = Pfad, wie DuplicatesPage) —
+                         PowerGrid ersetzt den RowStyle, das alte Row-ContextMenu entfällt daher. -->
+                    <DataGridTextColumn Header="{l:T Col.Path}" Binding="{Binding Path}" Width="*">
+                        <DataGridTextColumn.ElementStyle>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="ContextMenu" Value="{StaticResource FileSystemPathMenu}" />
+                                <Setter Property="Tag" Value="{Binding Path}" />
+                            </Style>
+                        </DataGridTextColumn.ElementStyle>
+                    </DataGridTextColumn>
                     <DataGridTextColumn Header="{l:T Col.Size}" Binding="{Binding Size, Converter={StaticResource BytesToSize}}" Width="100" />
                     <DataGridTextColumn Header="{l:T Col.Modified}" Binding="{Binding LastWriteUtc, StringFormat={}{0:yyyy-MM-dd}}" Width="110" />
                     <DataGridTextColumn Header="{l:T LogFinder.Col.Root}" Binding="{Binding Root}" Width="120" />
                     <DataGridTextColumn Header="{l:T LogFinder.Col.Pattern}" Binding="{Binding Pattern}" Width="100" />
-                    <DataGridTemplateColumn Header="" Width="170">
+                    <DataGridTemplateColumn Header="" Width="170" CanUserReorder="False">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate DataType="{x:Type items:LogFileItemViewModel}">
                                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -173,8 +172,7 @@
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
-                </DataGrid.Columns>
-            </DataGrid>
+            </controls:PowerGrid>
         </Border>
 
         <Grid Grid.Row="5" Margin="0,16,0,0">

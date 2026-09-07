@@ -50,6 +50,11 @@
                                   CommandParameter="{Binding}">
                             <MenuItem.Icon><ui:SymbolIcon Symbol="Info24" /></MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem Header="{l:T SearchWeb}"
+                                  Command="{Binding Tag.ViewModel.SearchWebCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  CommandParameter="{Binding}">
+                            <MenuItem.Icon><ui:SymbolIcon Symbol="Search24" /></MenuItem.Icon>
+                        </MenuItem>
                         <Separator />
                         <MenuItem Header="{l:T CopyCommand}"
                                   Command="{Binding Tag.ViewModel.CopyCommandCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
@@ -81,8 +86,59 @@
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTextColumn Header="{l:T Col.Name}" Binding="{Binding Name}" Width="*" />
-                <DataGridTextColumn Header="{l:T Col.Command}" Binding="{Binding Command}" Width="2*" />
-                <DataGridTextColumn Header="{l:T Col.Source}" Binding="{Binding SourceLabel}" Width="160" />
+                <DataGridTemplateColumn Header="{l:T Col.Recommendation}" Width="110" SortMemberPath="AdviceLabel">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="{x:Type core:AutostartEntry}">
+                            <Border CornerRadius="4" Padding="8,2" HorizontalAlignment="Left" VerticalAlignment="Center"
+                                    ToolTip="{Binding AdviceInfo}">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="#33808080" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Advice}" Value="Keep">
+                                                <Setter Property="Background" Value="#333FB950" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Advice}" Value="Unnecessary">
+                                                <Setter Property="Background" Value="#44D29922" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Advice}" Value="Caution">
+                                                <Setter Property="Background" Value="#55F85149" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Text="{Binding AdviceLabel}" FontSize="11" FontWeight="SemiBold">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Advice}" Value="Keep">
+                                                    <Setter Property="Foreground" Value="#3FB950" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Advice}" Value="Unnecessary">
+                                                    <Setter Property="Foreground" Value="#D29922" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Advice}" Value="Caution">
+                                                    <Setter Property="Foreground" Value="#F85149" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="{l:T Col.Info}" Width="2*" SortMemberPath="AdviceInfo">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="{x:Type core:AutostartEntry}">
+                            <TextBlock Text="{Binding AdviceInfo}" FontSize="11" Opacity="0.85"
+                                       TextWrapping="Wrap" VerticalAlignment="Center"
+                                       ToolTip="{Binding AdviceInfo}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn Header="{l:T Col.Command}" Binding="{Binding Command}" Width="*" />
+                <DataGridTextColumn Header="{l:T Col.Source}" Binding="{Binding SourceLabel}" Width="140" />
                 <DataGridTemplateColumn Header="" Width="190" CanUserReorder="False">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate DataType="{x:Type core:AutostartEntry}">

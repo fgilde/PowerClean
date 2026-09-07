@@ -44,6 +44,34 @@
                                Margin="8,0,0,0" Content="{l:T Cancel}"
                                Command="{Binding ViewModel.CancelCommand}"
                                Visibility="{Binding ViewModel.IsScanning, Converter={StaticResource BoolToVis}}" />
+
+                    <Border Width="1" Background="{DynamicResource ControlStrokeColorDefaultBrush}" Margin="12,4" />
+
+                    <ui:Button Appearance="Secondary" Icon="{ui:SymbolIcon ChevronDoubleDown20}"
+                               ToolTip="{l:T Duplicates.ExpandAll}"
+                               Command="{Binding ViewModel.ExpandAllCommand}" />
+                    <ui:Button Appearance="Secondary" Icon="{ui:SymbolIcon ChevronDoubleUp20}" Margin="4,0,0,0"
+                               ToolTip="{l:T Duplicates.CollapseAll}"
+                               Command="{Binding ViewModel.CollapseAllCommand}" />
+                    <ui:Button Appearance="Secondary" Icon="{ui:SymbolIcon CheckmarkCircle24}" Margin="12,0,0,0"
+                               Content="{l:T Duplicates.SmartSelect}"
+                               ToolTip="{l:T Duplicates.SmartSelectHint}"
+                               Command="{Binding ViewModel.SelectAllButFirstCommand}" />
+                    <ui:Button Appearance="Secondary" Icon="{ui:SymbolIcon DismissCircle24}" Margin="4,0,0,0"
+                               ToolTip="{l:T Duplicates.ClearSelection}"
+                               Command="{Binding ViewModel.ClearSelectionCommand}"
+                               Visibility="{Binding ViewModel.HasSelection, Converter={StaticResource BoolToVis}}" />
+                    <ui:Button Appearance="Danger" Icon="{ui:SymbolIcon Delete24}" Margin="12,0,0,0"
+                               Command="{Binding ViewModel.DeleteSelectedCommand}"
+                               Visibility="{Binding ViewModel.HasSelection, Converter={StaticResource BoolToVis}}">
+                        <ui:Button.Content>
+                            <TextBlock>
+                                <Run Text="{l:T Duplicates.DeleteSelected}" />
+                                <Run Text="(" /><Run Text="{Binding ViewModel.SelectedCount, Mode=OneWay}" /><Run Text=" · " /><Run
+                                    Text="{Binding ViewModel.SelectedBytes, Converter={StaticResource BytesToSize}, Mode=OneWay}" /><Run Text=")" />
+                            </TextBlock>
+                        </ui:Button.Content>
+                    </ui:Button>
                 </StackPanel>
                 <StackPanel Grid.Column="1" HorizontalAlignment="Right">
                     <TextBlock Style="{StaticResource StatLabel}" Text="{l:T Duplicates.Wasted}" />
@@ -83,8 +111,8 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <ItemsControl ItemsSource="{Binding ViewModel.Groups}">
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate DataType="{x:Type core:DuplicateGroup}">
-                            <Expander Margin="12,8" Padding="0">
+                        <DataTemplate DataType="{x:Type vm:DuplicateGroupViewModel}">
+                            <Expander Margin="12,8" Padding="0" IsExpanded="{Binding IsExpanded}">
                                 <Expander.Header>
                                     <Grid>
                                         <Grid.ColumnDefinitions>
@@ -93,7 +121,7 @@
                                             <ColumnDefinition Width="Auto" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock>
-                                            <Run Text="{Binding Paths.Count, Mode=OneWay}" />
+                                            <Run Text="{Binding CopyCount, Mode=OneWay}" />
                                             <Run Text=" Kopien · " />
                                             <Run Text="{Binding FileSize, Converter={StaticResource BytesToSize}, Mode=OneWay}" />
                                             <Run Text=" pro Stück" />
@@ -103,26 +131,28 @@
                                                    TextTrimming="CharacterEllipsis" MaxWidth="140" />
                                         <TextBlock Grid.Column="2" FontWeight="SemiBold"
                                                    Foreground="{StaticResource WarningBrush}"
-                                                   Text="{Binding WastedBytes, Converter={StaticResource BytesToSize}}" />
+                                                   Text="{Binding WastedBytes, Converter={StaticResource BytesToSize}, Mode=OneWay}" />
                                     </Grid>
                                 </Expander.Header>
-                                <ItemsControl ItemsSource="{Binding Paths}" Margin="0,8,0,0">
+                                <ItemsControl ItemsSource="{Binding Files}" Margin="0,8,0,0">
                                     <ItemsControl.ItemTemplate>
-                                        <DataTemplate>
+                                        <DataTemplate DataType="{x:Type vm:DuplicateFileViewModel}">
                                             <Grid Margin="8,4"
                                                   ContextMenu="{StaticResource FileSystemPathMenu}"
-                                                  Tag="{Binding}">
+                                                  Tag="{Binding Path}">
                                                 <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
                                                     <ColumnDefinition Width="*" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding}" VerticalAlignment="Center"
+                                                <CheckBox IsChecked="{Binding IsSelected}" VerticalAlignment="Center" Margin="0,0,10,0" />
+                                                <TextBlock Grid.Column="1" Text="{Binding Path}" VerticalAlignment="Center"
                                                            TextTrimming="CharacterEllipsis" />
-                                                <ui:Button Grid.Column="1" Appearance="Danger" Padding="8,4"
+                                                <ui:Button Grid.Column="2" Appearance="Danger" Padding="8,4"
                                                            Icon="{ui:SymbolIcon Delete24}"
                                                            Content="{l:T Delete}"
                                                            Command="{Binding DataContext.ViewModel.DeleteDuplicateCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                           CommandParameter="{Binding}" />
+                                                           CommandParameter="{Binding Path}" />
                                             </Grid>
                                         </DataTemplate>
                                     </ItemsControl.ItemTemplate>

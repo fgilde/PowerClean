@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
       xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
       xmlns:core="clr-namespace:Cleaner.Core.Services;assembly=Cleaner.Core"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance Type=vm:FolderCompareViewModel}"
@@ -174,119 +175,106 @@
 
         <!-- Main result grid -->
         <Border Grid.Row="3" Style="{StaticResource Card}" Padding="0">
-            <DataGrid x:Name="ResultsGrid"
-                      ItemsSource="{Binding ViewModel.EntriesView}"
-                      AutoGenerateColumns="False"
-                      CanUserAddRows="False" CanUserDeleteRows="False"
-                      IsReadOnly="True"
-                      HeadersVisibility="Column" GridLinesVisibility="None"
-                      Background="Transparent" BorderThickness="0"
-                      RowBackground="Transparent" AlternatingRowBackground="#08000000"
-                      MouseDoubleClick="ResultsGrid_MouseDoubleClick">
-                <DataGrid.Resources>
-                    <ContextMenu x:Key="RowContextMenu">
+            <controls:PowerGrid x:Name="ResultsGrid" GridId="foldercompare"
+                                ItemsSource="{Binding ViewModel.EntriesView}"
+                                MouseDoubleClick="ResultsGrid_MouseDoubleClick">
+                <controls:PowerGrid.RowContextMenu>
+                    <ContextMenu>
                         <MenuItem Header="{l:T FolderCompare.OpenDiff}"
-                                  Command="{Binding PlacementTarget.Tag.ViewModel.OpenFileDiffCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  Command="{Binding Tag.ViewModel.OpenFileDiffCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding}">
                             <MenuItem.Icon><ui:SymbolIcon Symbol="BranchCompare24" /></MenuItem.Icon>
                         </MenuItem>
                         <Separator />
                         <MenuItem Header="{l:T Reveal}"
-                                  Command="{Binding PlacementTarget.Tag.ViewModel.RevealLeftCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  Command="{Binding Tag.ViewModel.RevealLeftCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding}">
                             <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{l:T Reveal}"
-                                  Command="{Binding PlacementTarget.Tag.ViewModel.RevealRightCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  Command="{Binding Tag.ViewModel.RevealRightCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding}">
                             <MenuItem.Icon><ui:SymbolIcon Symbol="Folder24" /></MenuItem.Icon>
                         </MenuItem>
                         <Separator />
                         <MenuItem Header="{l:T CopyPath}"
-                                  Command="{Binding PlacementTarget.Tag.ViewModel.CopyLeftPathCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  Command="{Binding Tag.ViewModel.CopyLeftPathCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding}">
                             <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
                         </MenuItem>
                         <MenuItem Header="{l:T CopyPath}"
-                                  Command="{Binding PlacementTarget.Tag.ViewModel.CopyRightPathCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
+                                  Command="{Binding Tag.ViewModel.CopyRightPathCommand, RelativeSource={RelativeSource AncestorType=ContextMenu}}"
                                   CommandParameter="{Binding}">
                             <MenuItem.Icon><ui:SymbolIcon Symbol="Copy24" /></MenuItem.Icon>
                         </MenuItem>
                     </ContextMenu>
-                </DataGrid.Resources>
-                <DataGrid.RowStyle>
-                    <Style TargetType="DataGridRow">
-                        <Setter Property="ContextMenu" Value="{StaticResource RowContextMenu}" />
-                        <Setter Property="Tag" Value="{Binding DataContext, RelativeSource={RelativeSource AncestorType=UserControl}}" />
-                    </Style>
-                </DataGrid.RowStyle>
-                <DataGrid.Columns>
-                    <DataGridTemplateColumn Header="{l:T Col.Status}" Width="140" SortMemberPath="Status">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate DataType="{x:Type core:CompareEntry}">
-                                <Border CornerRadius="10" Padding="8,2"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center">
-                                    <Border.Style>
-                                        <Style TargetType="Border">
-                                            <Setter Property="Background" Value="{StaticResource StatusEqualBrush}" />
+                </controls:PowerGrid.RowContextMenu>
+
+                <DataGridTemplateColumn Header="{l:T Col.Status}" Width="140" SortMemberPath="Status">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate DataType="{x:Type core:CompareEntry}">
+                            <Border CornerRadius="10" Padding="8,2"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="{StaticResource StatusEqualBrush}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Status}" Value="Equal">
+                                                <Setter Property="Background" Value="{StaticResource StatusEqualBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="Different">
+                                                <Setter Property="Background" Value="{StaticResource StatusDifferentBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="LeftOnly">
+                                                <Setter Property="Background" Value="{StaticResource StatusLeftOnlyBrush}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding Status}" Value="RightOnly">
+                                                <Setter Property="Background" Value="{StaticResource StatusRightOnlyBrush}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <TextBlock Foreground="White" FontWeight="SemiBold" FontSize="11">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="{Binding Status}" />
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Status}" Value="Equal">
-                                                    <Setter Property="Background" Value="{StaticResource StatusEqualBrush}" />
+                                                    <Setter Property="Text" Value="{l:T FolderCompare.Status.Equal}" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="Different">
-                                                    <Setter Property="Background" Value="{StaticResource StatusDifferentBrush}" />
+                                                    <Setter Property="Text" Value="{l:T FolderCompare.Status.Different}" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="LeftOnly">
-                                                    <Setter Property="Background" Value="{StaticResource StatusLeftOnlyBrush}" />
+                                                    <Setter Property="Text" Value="{l:T FolderCompare.Status.LeftOnly}" />
                                                 </DataTrigger>
                                                 <DataTrigger Binding="{Binding Status}" Value="RightOnly">
-                                                    <Setter Property="Background" Value="{StaticResource StatusRightOnlyBrush}" />
+                                                    <Setter Property="Text" Value="{l:T FolderCompare.Status.RightOnly}" />
                                                 </DataTrigger>
                                             </Style.Triggers>
                                         </Style>
-                                    </Border.Style>
-                                    <TextBlock Foreground="White" FontWeight="SemiBold" FontSize="11">
-                                        <TextBlock.Style>
-                                            <Style TargetType="TextBlock">
-                                                <Setter Property="Text" Value="{Binding Status}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Equal">
-                                                        <Setter Property="Text" Value="{l:T FolderCompare.Status.Equal}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Different">
-                                                        <Setter Property="Text" Value="{l:T FolderCompare.Status.Different}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="LeftOnly">
-                                                        <Setter Property="Text" Value="{l:T FolderCompare.Status.LeftOnly}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="RightOnly">
-                                                        <Setter Property="Text" Value="{l:T FolderCompare.Status.RightOnly}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </TextBlock.Style>
-                                    </TextBlock>
-                                </Border>
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Border>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
 
-                    <DataGridTextColumn Header="{l:T Col.Path}" Binding="{Binding RelativePath}" Width="*" />
-                    <DataGridTextColumn Header="Left size"
-                                        Binding="{Binding LeftSize, Converter={StaticResource BytesToSize}}"
-                                        Width="100" />
-                    <DataGridTextColumn Header="Right size"
-                                        Binding="{Binding RightSize, Converter={StaticResource BytesToSize}}"
-                                        Width="100" />
-                    <DataGridTextColumn Header="Left date"
-                                        Binding="{Binding LeftLastWriteUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
-                                        Width="130" />
-                    <DataGridTextColumn Header="Right date"
-                                        Binding="{Binding RightLastWriteUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
-                                        Width="130" />
-                </DataGrid.Columns>
-            </DataGrid>
+                <DataGridTextColumn Header="{l:T Col.Path}" Binding="{Binding RelativePath}" Width="*" />
+                <DataGridTextColumn Header="Left size"
+                                    Binding="{Binding LeftSize, Converter={StaticResource BytesToSize}}"
+                                    Width="100" />
+                <DataGridTextColumn Header="Right size"
+                                    Binding="{Binding RightSize, Converter={StaticResource BytesToSize}}"
+                                    Width="100" />
+                <DataGridTextColumn Header="Left date"
+                                    Binding="{Binding LeftLastWriteUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                    Width="130" />
+                <DataGridTextColumn Header="Right date"
+                                    Binding="{Binding RightLastWriteUtc, StringFormat={}{0:yyyy-MM-dd HH:mm}}"
+                                    Width="130" />
+            </controls:PowerGrid>
         </Border>
 
         <!-- Status -->

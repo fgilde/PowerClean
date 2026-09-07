@@ -6,6 +6,7 @@
       xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
       xmlns:vm="clr-namespace:Cleaner.App.ViewModels.Pages"
       xmlns:l="clr-namespace:Cleaner.App.Localization"
+      xmlns:controls="clr-namespace:Cleaner.App.Controls"
       xmlns:svc="clr-namespace:Cleaner.App.Services"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance Type=vm:CleanupHistoryViewModel}">
@@ -54,14 +55,8 @@
                 <TextBlock Text="{l:T History.Empty}" Opacity="0.6"
                            HorizontalAlignment="Center" VerticalAlignment="Center"
                            Visibility="{Binding ViewModel.IsEmpty, Converter={StaticResource BoolToVis}}" />
-                <DataGrid ItemsSource="{Binding ViewModel.Entries}"
-                          AutoGenerateColumns="False" CanUserAddRows="False" CanUserDeleteRows="False"
-                          HeadersVisibility="Column" GridLinesVisibility="None"
-                          Background="Transparent" BorderThickness="0"
-                          RowBackground="Transparent" AlternatingRowBackground="#08000000"
-                          IsReadOnly="True"
+                <controls:PowerGrid GridId="history" ItemsSource="{Binding ViewModel.Entries}"
                           Visibility="{Binding ViewModel.IsEmpty, Converter={StaticResource InverseBoolToVis}}">
-                    <DataGrid.Columns>
                         <DataGridTextColumn Header="{l:T History.Col.Time}" Width="160"
                                             Binding="{Binding CleanedAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" />
                         <DataGridTextColumn Header="{l:T History.Col.Target}" Width="*"
@@ -70,7 +65,7 @@
                                             Binding="{Binding FilesDeleted}" />
                         <DataGridTextColumn Header="{l:T History.Col.Size}" Width="110"
                                             Binding="{Binding FreedBytes, Converter={StaticResource BytesToSize}}" />
-                        <DataGridTemplateColumn Header="{l:T History.Col.Mode}" Width="120">
+                        <DataGridTemplateColumn Header="{l:T History.Col.Mode}" Width="120" SortMemberPath="UsedRecycleBin">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type svc:CleanupHistoryEntry}">
                                     <Grid VerticalAlignment="Center">
@@ -83,7 +78,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                        <DataGridTemplateColumn Header="" Width="200">
+                        <DataGridTemplateColumn Header="" Width="200" CanUserReorder="False">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate DataType="{x:Type svc:CleanupHistoryEntry}">
                                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -101,8 +96,7 @@
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
+                </controls:PowerGrid>
             </Grid>
         </Border>
 

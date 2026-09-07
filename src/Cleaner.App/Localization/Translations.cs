@@ -337,6 +337,15 @@ public static class Translations
             ["Grid.ViewNamePlaceholder"] = "View name...",
             ["Grid.UnnamedColumn"] = "Column",
             ["Col.Active"] = "Active",
+            ["Col.Info"] = "Info",
+
+            // Duplicates multi-select
+            ["Duplicates.ExpandAll"] = "Expand all groups",
+            ["Duplicates.CollapseAll"] = "Collapse all groups",
+            ["Duplicates.SmartSelect"] = "Auto-select",
+            ["Duplicates.SmartSelectHint"] = "Selects every copy except the first one in each group",
+            ["Duplicates.ClearSelection"] = "Clear selection",
+            ["Duplicates.DeleteSelected"] = "Delete selected",
 
             // About
             ["About.Claim"] = "Free Windows cleaning, disk analysis and system tools — no ads, no telemetry, open source.",
@@ -708,6 +717,14 @@ public static class Translations
             ["Grid.ViewNamePlaceholder"] = "Name der Ansicht...",
             ["Grid.UnnamedColumn"] = "Spalte",
             ["Col.Active"] = "Aktiv",
+            ["Col.Info"] = "Info",
+
+            ["Duplicates.ExpandAll"] = "Alle Gruppen aufklappen",
+            ["Duplicates.CollapseAll"] = "Alle Gruppen zuklappen",
+            ["Duplicates.SmartSelect"] = "Auto-Auswahl",
+            ["Duplicates.SmartSelectHint"] = "Wählt in jeder Gruppe alle Kopien außer der ersten aus",
+            ["Duplicates.ClearSelection"] = "Auswahl aufheben",
+            ["Duplicates.DeleteSelected"] = "Ausgewählte löschen",
 
             ["About.Claim"] = "Kostenloses Windows-Aufräumen, Disk-Analyse und System-Tools — ohne Werbung, ohne Telemetrie, Open Source.",
             ["About.CheckUpdates"] = "Nach Updates suchen",

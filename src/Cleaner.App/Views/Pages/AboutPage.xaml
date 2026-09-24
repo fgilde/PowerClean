@@ -119,7 +119,7 @@
                         <TextBlock Text="{l:T About.SourceCode}" FontSize="11" Opacity="0.6" />
                     </StackPanel>
                 </ui:CardAction>
-                <ui:CardAction Margin="0,0,8,0" Icon="{ui:SymbolIcon Bug24}"
+                <ui:CardAction Margin="0,0,8,8" Icon="{ui:SymbolIcon Bug24}"
                                Command="{Binding ViewModel.OpenUrlCommand}"
                                CommandParameter="{Binding ViewModel.IssuesUrl}">
                     <StackPanel>
@@ -127,12 +127,26 @@
                         <TextBlock Text="{l:T About.IssuesText}" FontSize="11" Opacity="0.6" />
                     </StackPanel>
                 </ui:CardAction>
-                <ui:CardAction Margin="8,0,0,0" Icon="{ui:SymbolIcon History24}"
+                <ui:CardAction Margin="8,0,0,8" Icon="{ui:SymbolIcon History24}"
                                Command="{Binding ViewModel.OpenUrlCommand}"
                                CommandParameter="{Binding ViewModel.ReleasesUrl}">
                     <StackPanel>
                         <TextBlock Text="Releases" FontWeight="SemiBold" />
                         <TextBlock Text="{l:T About.ReleasesText}" FontSize="11" Opacity="0.6" />
+                    </StackPanel>
+                </ui:CardAction>
+                <ui:CardAction Margin="0,0,8,0" Icon="{ui:SymbolIcon Chat24}"
+                               Command="{Binding ViewModel.OpenContactCommand}">
+                    <StackPanel>
+                        <TextBlock Text="{l:T About.Contact}" FontWeight="SemiBold" />
+                        <TextBlock Text="{l:T About.ContactText}" FontSize="11" Opacity="0.6" />
+                    </StackPanel>
+                </ui:CardAction>
+                <ui:CardAction Margin="8,0,0,0" Icon="{ui:SymbolIcon Heart24}"
+                               Command="{Binding ViewModel.OpenSupportCommand}">
+                    <StackPanel>
+                        <TextBlock Text="{l:T About.Support}" FontWeight="SemiBold" />
+                        <TextBlock Text="{l:T About.SupportText}" FontSize="11" Opacity="0.6" />
                     </StackPanel>
                 </ui:CardAction>
             </UniformGrid>

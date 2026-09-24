@@ -67,6 +67,14 @@ public sealed partial class AboutViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public void OpenContact()
+        => ConnectWidgetDialog.Show("contact", Localization.L.Current["About.Contact"]);
+
+    [RelayCommand]
+    public void OpenSupport()
+        => ConnectWidgetDialog.Show("support", Localization.L.Current["About.Support"]);
+
+    [RelayCommand]
     public void OpenUrl(string? url)
     {
         if (string.IsNullOrWhiteSpace(url)) return;

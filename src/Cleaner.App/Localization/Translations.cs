@@ -356,6 +356,10 @@ public static class Translations
             ["About.IssuesText"] = "Bugs & feature requests",
             ["About.ReleasesText"] = "All versions & changelogs",
             ["About.GildeText"] = "More projects and info at gilde.org",
+            ["About.Contact"] = "Contact",
+            ["About.ContactText"] = "Send a message directly",
+            ["About.Support"] = "Support PowerClean",
+            ["About.SupportText"] = "Support further development",
 
             // Autostart
             ["Autostart.ColCommand"] = "Command / Path",
@@ -734,6 +738,10 @@ public static class Translations
             ["About.IssuesText"] = "Bugs & Feature-Wünsche",
             ["About.ReleasesText"] = "Alle Versionen & Changelogs",
             ["About.GildeText"] = "Mehr Projekte und Infos auf gilde.org",
+            ["About.Contact"] = "Kontakt",
+            ["About.ContactText"] = "Direkt eine Nachricht schreiben",
+            ["About.Support"] = "PowerClean unterstützen",
+            ["About.SupportText"] = "Die Weiterentwicklung unterstützen",
 
             ["Autostart.ColCommand"] = "Befehl / Pfad",
             ["Autostart.ShowShort"] = "Anzeigen",
